@@ -1,0 +1,52 @@
+.header {
+  max-width: 60rem;
+  margin: auto;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.list{
+  display: flex;
+  gap: 1rem;
+  vertical-align:top;
+  width:100%;
+  text-align:right;
+}
+
+
+
+.list a {
+  text-decoration: none;
+  color: var(--color-primary-400);
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+ a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  color: blue;
+}
+
+     a:hover
+     {
+         color: red;
+    }
+
+    a:active
+    {
+        color:green;
+    }
+
+    .topnav-right{
+        float:right;
+    }
+

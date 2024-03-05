@@ -1,0 +1,24 @@
+import classes from './FabricsList.module.css';
+import {NavLink} from 'react-router-dom';
+function FabricsList({ events }) {
+const items= Object.keys(events).map(id => {
+  return { uuid: id, name:events[id].name, desc:events[id].desc ,image:events[id].image};
+});
+  return (
+
+
+      <ul>
+        {items.map((item) => (
+          <li id={classes.main}>
+                 <NavLink to="/" className={({isActive})=>isActive?classes.active:undefined}end>
+                     <img src="{item.image}" alt="abc">
+                     <span id={classes.sec1}>{item.desc}</span>
+                 </NavLink>
+
+          </li>
+        ))}
+      </ul>
+  );
+}
+
+export default FabricsList;

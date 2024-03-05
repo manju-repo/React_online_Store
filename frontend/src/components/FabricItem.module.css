@@ -1,0 +1,26 @@
+.disp {
+display:flex;
+height:100%;
+width:100%;
+}
+.disp > div  {
+height:100%;
+width:40%;
+margin:10px;
+padding:20px;
+
+
+}
+
+.disp > div >img {
+    height:40%;
+    width:100%;
+}
+
+.disp > div >h2 {
+
+}
+.order{
+display:inline;
+
+}
