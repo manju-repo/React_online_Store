@@ -4,6 +4,9 @@
   border:none;
   box-shadow:none;
   background:none;
+  padding:0px;
+  margin:none;
+  width:60px;
 }
 
 .button:hover,
@@ -11,13 +14,12 @@
   color: white;
 }
 
-.button span {
-  margin: 0 0.5rem;
-}
+
 
 .badge {
-  background-color: #0000ff;
-  border-radius: 30px;
-  padding: 0.15rem 1.25rem;
+  background-color: #a8a8e9;
+  border-radius: 50%;
+  padding: 0.4rem 0.3rem;
   color: #1d1d1d;
+  font-style: normal;
 }

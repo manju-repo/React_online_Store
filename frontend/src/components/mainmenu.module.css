@@ -1,0 +1,55 @@
+.events {
+    width: 100%;
+    display:flex;
+    justify-content:center;
+}
+
+.list {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+  list-style: none;
+  justify-content:space-between;
+    background-color: #452b4e;
+
+}
+
+.item{
+position: relative;
+}
+
+
+.item h2 {
+  margin: 0 0 1rem 0;
+  color:white;
+}
+
+.itemContainer {
+  position: relative;
+  width: fit-content;
+}
+
+/* Style for the image */
+.itemImage {
+  height: 175px;
+  width: 150px; /* Ensure the image takes full width of its container */
+  border-radius: 50%; /* Make the image round */
+}
+
+/* Style for the title */
+.itemTitle {
+  position: absolute;
+  bottom: -30px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  color: white; /* Set text color */
+  text-align: center; /* Center-align text */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  padding: 5px 10px; /* Padding around the text */
+  border-radius: 5px; /* Rounded corners for the background */
+  font-size: 16px; /* Adjust font size as needed */
+  width:100%;
+}

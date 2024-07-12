@@ -1,0 +1,46 @@
+* {
+color:white;
+}
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color:white;
+}
+
+.tabList {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  width: 100%;
+color:white;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  flex-grow: 1; /* Ensures the tab occupies available space */
+  text-align: center;
+ background-color: transparent;
+     color:white;
+
+ }
+
+.tab:last-child {
+  margin-right: 0;
+}
+
+.active {
+  font-weight: bold;
+  border-bottom: 2px solid #000;
+}
+
+.tabContent {
+  padding: 20px;
+  border: 1px solid #ddd;
+color: white;
+  width: 100%;
+}

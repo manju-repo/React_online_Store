@@ -2,9 +2,9 @@ import { forwardRef, useImperativeHandle, useRef } from 'react';
 import {useDispatch} from 'react-redux';
 import { createPortal } from 'react-dom';
 import {uiActions} from '../Store/ui_slice';
+import classes from './modal.module.css';
 
-
-const Modal = forwardRef(function Modal({ children,onReset }, ref) {
+const Modal = forwardRef(function Modal({ children,onReset,onOrder }, ref) {
   const dialog = useRef();
   const dispatch=useDispatch();
   useImperativeHandle(ref, () => {
@@ -15,20 +15,17 @@ const Modal = forwardRef(function Modal({ children,onReset }, ref) {
       },
         close(){
         dialog.current.close();
-        console.log("modal close");
         }
 
     };
   });
 
   return createPortal(
-    <dialog
-      ref={dialog}  onClose={onReset}
-      className="backdrop:bg-stone-900/90 p-4 rounded-md shadow-md"  >
-      {children}
-      <form method="dialog"   className="mt-4 text-right" >
-        <button >Order Now</button>
-       </form>
+    <dialog ref={dialog} className={classes.modal_wrapper}>
+            <div className={classes.modal_content}>
+
+        <button className={classes.close_button} onClick={() => dialog.current.close()}>X</button>
+      {children}</div>
     </dialog>,
     document.getElementById('modal-root')
   );

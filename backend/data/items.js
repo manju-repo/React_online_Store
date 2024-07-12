@@ -1,4 +1,4 @@
-const Item = require("../models/item"); // Create the Item model
+const Item = require("../models/Categories"); // Create the Item model
 
 
 async function getAll() {

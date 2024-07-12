@@ -4,6 +4,7 @@ const itemSchema = new mongoose.Schema({
   id:Number,
   rate:Number,
   type: String,
+  image: String,
   quantity:Number,
   totalPrice:Number
 });

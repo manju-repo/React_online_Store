@@ -1,6 +1,6 @@
 const express = require('express');
-
-const { getAll, get, add, replace, remove } = require('../data/fabric');
+const checkAuth = require('../middleware/checkAuth');
+const { getAll,getCollection, get, add, put, remove } = require('../data/fabric');
 const {
   isValidText,
   isValidDate,
@@ -25,62 +25,45 @@ console.log("id in routes:"+fabric_id);
     next(error);
   }
 });
+/*router.get('/subcategory=:subcategory_id', async (req, res, next) => {
+
+    const {subcategory_id}=req.params;
+console.log("id in routes with subcat:"+subcategory_id);
+
+    try {
+        const collection = await getCollection(subcategory_id);
+            console.log(collection);
+
+        res.json({success:true,data:collection});
+    } catch (error) {
+    console.log(error,message);
+    next(error);
+  }
+});*/
 
 router.get('/', async (req, res, next) => {
-console.log("in route");
+console.log(req.url);
+  const sub_category = req.query.sub_category;
 
+console.log('fabric routes',sub_category);
   try {
-    const fabrics = await getAll();
-    console.log("res from /:"+fabrics);
+  let fabrics=null;
+  if(sub_category)
+     fabrics=await getCollection(sub_category);
+  else
+     fabrics = await getAll();
+    //console.log("res from /:"+fabrics);
     res.json(fabrics);
   } catch (error) {
-    next(error);
-  }
-});
-/*
-router.patch('/:id', async (req, res, next) => {
-  const data = req.body;
-
-  let errors = {};
-
-  if (!isValidText(data.title)) {
-    errors.title = 'Invalid title.';
-  }
-
-  if (!isValidText(data.description)) {
-    errors.description = 'Invalid description.';
-  }
-
-  if (!isValidDate(data.date)) {
-    errors.date = 'Invalid date.';
-  }
-
-  if (!isValidImageUrl(data.image)) {
-    errors.image = 'Invalid image.';
-  }
-
-  if (Object.keys(errors).length > 0) {
-    return res.status(422).json({
-      message: 'Updating the event failed due to validation errors.',
-      errors,
-    });
-  }
-
-  try {
-    await replace(req.params.id, data);
-    res.json({ message: 'Fabric updated.', fabric: data });
-  } catch (error) {
+  console.log(error);
     next(error);
   }
 });
 
-router.delete('/:id', async (req, res, next) => {
-  try {
-    await remove(req.params.id);
-    res.json({ message: 'Fabric deleted.' });
-  } catch (error) {
-    next(error);
-  }
-});
-*/
+router.use(checkAuth);
+router.delete('/:id', remove);
+
+router.post('/',add);
+router.put('/:id',put);
+
 module.exports = router;

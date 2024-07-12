@@ -13,6 +13,7 @@ router.get('/', async (req, res, next) => {
 
   try {
     const items = await getAll();
+    //console.log("ITEMS:"+items);
     res.json(items);
   } catch (error) {
     next(error);
@@ -22,7 +23,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   let {id}=req.params;
 
-console.log(id);
+//console.log(id);
   try {
     const item = await get(id);
     res.json(item);

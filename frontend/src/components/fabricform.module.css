@@ -1,0 +1,73 @@
+.container{
+    width:100%;
+    margin: 0 auto;
+    text-align:center;
+}
+h2{
+    margin-bottom:20px;
+}
+
+input{
+    width:100rem;
+}
+
+tr{
+width:100%;
+display:flex;
+}
+ td:nth-child(1) {
+    width: 20%;
+}
+td:nth-child(2) {
+    width: 80%;
+}
+
+
+.control{
+    width:100%;
+}
+
+.action button{
+    width:4rem;
+}
+.errorMsg{
+    color:red;
+}
+.select,
+input[type="text"],
+input[type="textarea"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+}
+
+.react-select__menu{
+    max-height: 20px;
+}
+
+.react-select__option {
+  height: 10px; /* Adjust the height as needed */
+}
+
+.button {
+    height:30px;
+    width:80px;
+  background-color: e878bd; /* Green background */
+  color: #850e57; /* White text */
+  font-size: 16px; /* Font size */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Cursor style */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.button:hover {
+  background-color: #f1aac8; /* Darker green background on hover */
+  color:white;
+}
+
+.imageRow {
+  margin-bottom: 2.5px;
+  margin-top:2.5px;
+}
+

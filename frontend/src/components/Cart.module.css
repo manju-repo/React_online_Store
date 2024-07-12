@@ -1,3 +1,54 @@
-.cart_modal:backdrop {
+.cart_modal.backdrop {
   background: rgba(0, 0, 0, 0.9);
+}
+
+h2{
+    margin-top:20px;
+    color:#e44da5;
+}
+
+.empty{
+    display:flex;
+}
+
+span{
+    height:4rem;
+    width:25%;
+}
+
+ .button{
+    background-color:#0a0a23;
+    color: #fff;
+     border:none;
+    margin:0 10px;
+    width:auto;
+    height:25px;
+}
+
+.actions{
+    display:flex;
+    margin-top:20px;
+    margin-bottom:10px;
+    justify-content:center;
+}
+
+.summary{
+    text-align:right;
+    font-weight:bold;
+    justify-content: space-between; /* Space out the items */
+    margin-right: 20px;
+}
+
+.cartItemsContainer {
+    height: 450px; /* Set your desired height */
+    overflow-y: auto; /* Add vertical scroll if necessary */
+}
+
+.shop{
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items:center;
+    gap:1rem;
+    margin-top:50px;
 }

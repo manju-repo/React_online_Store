@@ -1,35 +1,55 @@
-import { useEffect, useState } from 'react';
-import axios from "axios";
+import { useEffect, useState, useContext} from 'react';
 import {useParams} from 'react-router-dom';
+import {useDispatch} from'react-redux';
+import {uiActions } from '../Store/ui_slice';
 import FabricsList from '../components/FabricsList';
+import {WishlistContext} from '../Context/wishlist-context';
 
 function FabricsPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [Fabrics, setFabrics] = useState();
-  const [error, setError] = useState();
-  let {cat}=useParams();
-console.log("cat="+cat);
-let linkTo="fabrics";
-  if(cat===2)
-    linkTo="sarees";
-  else if(cat===3)
-    linkTo="lenhengas";
+  const [fabrics, setFabrics] = useState([]);
+  const dispatch= useDispatch();
+  const {category,sub_category} = useParams();
+  console.log("cat",category);
+  const {wishlist}=useContext(WishlistContext);
+  let queryString="";
+  if(sub_category){
+    queryString=`?sub_category=${sub_category}`;
+  }
+  console.log("qry ",queryString);
+    const fetchFabrics=async(dispatch)=>{
+        try{
+        console.log("in fabrics useeffect");
+
+              const response = await fetch(`http://localhost:5000/${category}${queryString}`);
+              if (!response.ok) {
+                throw new Error('Fetching Fabrics failed')
+              }
+              const resData = await response.json();
+              console.log(resData);
+              setFabrics(resData);
+          }catch(error){
+              /*dispatch(
+                uiActions.showNotification({
+                status: 'error',
+                title:  'Error!',
+                message: error.message,
+              })
+            );*/
+            console.log(error.message);
+           }
+        }
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/${linkTo}`)
-              .then(response => setFabrics(response.data))
-              .catch(error => console.error(error));
-    }, [linkTo]);
-  return (
-    <>
-      <div style={{ textAlign: 'center' }}>
-        {isLoading && <p>Loading...</p>}
-        {error && <p>{error}</p>}
-      </div>
-      {! Fabrics && <p>No data</p>}
-      {!isLoading && Fabrics && <FabricsList events={Fabrics} />}
-    </>
-  );
-}
+        fetchFabrics();
+        return()=>{
+            dispatch(uiActions.clearNotification());
+        }
+    },[dispatch, category, sub_category]);
+    return (
+    <>{fabrics && <FabricsList list={fabrics} category={category} sub_category={sub_category} updateFabricList={fetchFabrics}/>}</>);
+  };
 
-export default FabricsPage;
+    export default FabricsPage;
+
+
+

@@ -1,0 +1,4 @@
+-to allow decimals for fabric but not other items
+-to add stock field in table and update it after placing order
+-retry payment
+-to keep different formatting for fabrics in cart ,fabriclist,paymentsuccess

@@ -1,0 +1,89 @@
+/* clientorders.module.css */
+
+
+
+.container {
+  width: 100%;
+
+}
+
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  margin-right: 10px; /* Add margin between tabs */
+  width: 100%;
+  color: white; /* Set tab button text color to black */
+}
+
+.label {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 2fr 1fr; /* Define column sizes */
+    gap: 5px; /* Optional: adds spacing between columns */
+    align-items: center;
+    padding: 10px 0;
+    font-weight: bold;
+}
+
+.order {
+    display: flex;
+    gap: 5px; /* Optional: adds spacing between columns */
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    width:100%;
+}
+
+.order_summary{
+      border: 1px solid black;
+      display:flex;
+      color:black;
+      width:100%;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+
+}
+
+.tab_content {
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: #000;
+}
+.client_details {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+.client_details div {
+    display: flex;
+}
+
+.client_details span:first-child {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.button_link {
+    font-size: 15px;
+    width: 20px;
+    height: 20px;
+    background: none;
+    border: none;
+    color: blue;
+    cursor: pointer;
+    padding: 0;
+}
+
+.button_link:focus {
+    outline: none;
+}

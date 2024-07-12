@@ -1,52 +1,61 @@
 .header {
-  max-width: 60rem;
-  margin: auto;
-  padding: 2rem;
+  padding: 0.5rem 1rem;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+}
+
+.nav {
   display: flex;
   justify-content: space-between;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-.list{
+.logo {
+  color: #e44da5;
+  text-decoration: none;
+}
+
+.logo h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.badge {
+  background-color: #a8a8e9;
+  border-radius: 50%;
+  padding: 0.05rem 0.2rem;
+  color: #1d1d1d;
+  font-style: normal;
+
+
+}
+
+.nav li {
+color: #e44da5;
   display: flex;
-  gap: 1rem;
-  vertical-align:top;
-  width:100%;
-  text-align:right;
 }
 
-
-
-.list a {
+.nav a {
+  color: #e44da5;
   text-decoration: none;
-  color: var(--color-primary-400);
+  padding: 0.5rem;
 }
 
-.topnav {
-  overflow: hidden;
-  background-color: #333;
+.nav a:hover {
+  color: red;
 }
 
- a {
-  float: left;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-  color: blue;
+.nav a:active {
+  color: green;
 }
 
-     a:hover
-     {
-         color: red;
-    }
+.nav i {
+  font-size: 1.25rem;
+}
 
-    a:active
-    {
-        color:green;
-    }
-
-    .topnav-right{
-        float:right;
-    }
-
+@media (max-width: 768px) {
+  .nav a {
+    padding: 0.25rem;
+  }
+}

@@ -1,0 +1,421 @@
+Razorpay Docs Logo
+Search the documentation
+/
+
+
+Pricing
+
+API Reference
+
+Support
+
+Log In
+
+
+Sign Up
+
+Home
+Get Started
+Payments
+Banking Plus
+Partners
+Developer Tools
+Razorpay Payments
+Sign Up
+
+Dashboard
+
+Customers
+
+Orders
+
+Payments
+
+International Payments
+
+Payment Methods
+
+About Payment Methods
+Bank Transfer
+Cards
+
+EMI
+
+MOTO
+
+Netbanking
+Pay Later
+FPX
+UPI
+
+Wallets
+
+Sodexo
+Transaction Limits
+
+Settlements
+
+Refunds
+
+About Refunds
+Normal Refunds
+Instant Refunds
+
+Batch Refunds
+EMI and Pay Later Refunds
+Dashboard
+
+Handle Refund Errors
+Refunds APIs
+Subscribe to Webhooks
+Refund Communication
+Frequently Asked Questions (FAQs)
+Disputes
+
+Payment Gateway
+
+Ecommerce Plugins
+
+About Ecommerce Plugins
+Payment Gateway
+
+Arastta
+
+Build Your Own
+
+About Build Your Own Ecommerce Plugin
+Use Cases
+FAQs
+BigCommerce
+
+Drupal Commerce
+
+Easy Digital Downloads
+
+CS-Cart
+
+Gravity Forms
+
+Magento
+
+OpenCart
+
+Prestashop
+
+Shopify - Razorpay Secure
+
+Shopify - Razorpay Cash on Delivery
+
+WHMCS
+
+Wix
+
+Woocommerce
+
+WordPress
+
+Others
+
+Widgets
+
+Magic Checkout
+
+Razorpay - Payments on WhatsApp
+
+Payment Links
+
+Payment Button
+
+Payment Pages
+
+Invoices
+
+QR Codes
+
+Affordability
+
+Subscriptions
+
+Smart Collect
+
+Optimizer
+
+Route
+
+Third Party Validation
+
+Payments Mobile App
+
+Glossary
+Payments
+
+Payment Gateway
+
+Ecommerce Plugins
+
+Build Your Own
+
+Faqs
+
+Frequently Asked Questions (FAQs)
+Find answers to frequently asked questions about building a custom plugin.
+
+1. How do I sign up for a test account?
+
+2. How do I find SDKs for various languages?
+
+3. How to create a Razorpay API instance?
+
+4. How do I find my Razorpay credentials?
+
+5. How do I find the base URL for Razorpay API?
+
+6. How do I find sample code for my language?
+
+Was this page helpful?
+
+
+Yes
+
+
+No
+
+SUBSCRIBE TO DEVELOPER UPDATES
+
+Your email address
+
+Subscribe
+
+API Reference Guide
+
+Integrations
+
+Support
+
+ON THIS PAGE
+
+Frequently Asked Questions (FAQs)
+
+
+Back To Top
+
+
+heading icon
+Razorpay Docs AI
+
+Beta
+
+What is orders API?
+
+DOCS AI Symbol in blue color
+The Orders API is a feature provided by Razorpay that allows you to create and manage orders for payments. It enables you to generate a unique `order_id` that is tied to a specific payment transaction. This `order_id` has a 1:1 mapping with the order created for the authorization payment at your end.
+
+With the Orders API, you can create an order by making a POST request to the `/orders` endpoint. This will generate a unique `order_id` that you can use to create a payment against the order. The `order_id` is essential for tracking and managing the payment associated with the order.
+
+To learn more about the Orders API and how to create an order, you can refer to the detailed Order documentation.
+
+The Orders API provides several endpoints for different functionalities related to orders. Here is a list of the various Orders APIs and their descriptions:
+
+1. Create an order: This API allows you to create an order by providing the necessary details such as amount, currency, and payment capture settings.
+
+2. Fetch orders: This API allows you to view all the orders created in your Razorpay account.
+
+3. Fetch orders with expanded payments object: This API provides a detailed view of all the orders along with the expanded payments object, which includes information about the payments made for each order.
+
+4. Fetch orders with card parameter expanded in payments object: This API allows you to view all the orders with the card parameter expanded in the payments object. This provides additional information about the card used for payment.
+
+5. Fetch order by order id: This API allows you to view the details of a specific order by providing the order id.
+
+6. Fetch payments for an order: This API allows you to view all the payments made for a specific order.
+
+7. Update order: This API allows you to update the 'Notes' field of an existing order.
+
+These APIs provide you with the flexibility to manage and track your orders effectively. You can use them to retrieve order details, view payments associated with orders, and update order information as needed.
+
+For more information on each API and their usage, you can refer to the respective documentation links provided.
+
+I hope this helps! Let me know if you have any further questions.
+
+Was this response useful?
+
+
+
+refund function of razorpay instance
+
+DOCS AI Symbol in blue color
+The refund function of the Razorpay instance allows you to initiate a refund for a specific payment. This function is used to process both full and partial refunds.
+
+Here is an example of how to use the refund function in different programming languages:
+
+Curl:
+curl
+curl -u [YOUR_KEY_ID]:[YOUR_KEY_SECRET] \
+-X POST https://api.razorpay.com/v1/payments/pay_29QQoUBi66xm2f/refund \
+-H 'Content-Type: application/json' \
+-d '{
+  "amount": 500100
+}'
+
+Java:
+java
+RazorpayClient razorpay = new RazorpayClient("[YOUR_KEY_ID]", "[YOUR_KEY_SECRET]");
+
+String paymentId = "pay_E54n391WnEAV9H";
+
+JSONObject refundRequest = new JSONObject();
+refundRequest.put("amount",100);
+refundRequest.put("speed","normal");
+JSONObject notes = new JSONObject();
+notes.put("notes_key_1","Tea, Earl Grey, Hot");
+notes.put("notes_key_2","Tea, Earl Grey… decaf.");
+refundRequest.put("notes",notes);
+refundRequest.put("receipt","Receipt No. #35");
+
+Payment payment = instance.payments.refund(paymentId,refundRequest);
+
+PHP:
+php
+
+use Razorpay\Api\Api;
+$api = new Api('YOUR_KEY_ID, 'YOUR_KEY_SECRET');
+
+$payment = $api->payment->fetch('pay_DgExayLn3RBbZX');
+$refund = $payment->refund();
+
+//$refund = $payment->refund(array('amount' => 500100)); for partial refund
+
+?>
+
+Python:
+python
+import razorpay
+razorpay.Client(auth=("[YOUR_KEY_ID]", "[YOUR_KEY_SECRET]"))
+
+client.payment.refund(paymentId,{
+  "amount": "100",
+  "speed": "normal",
+  "notes": {
+    "notes_key_1": "Beam me up Scotty.",
+    "notes_key_2": "Engage"
+  },
+  "receipt": "Receipt No. 31"
+})
+
+Ruby:
+ruby
+require 'razorpay'
+Razorpay.setup("YOUR_KEY_ID", "YOUR_KEY_SECRET")
+
+To initiate a refund, you need to provide the payment ID and the refund details such as the refund amount, speed, notes, and receipt. The refund amount can be either a full refund or a partial refund, depending on your requirement.
+
+Please note that the refund function is specific to the programming language you are using. You need to use the appropriate syntax and parameters as shown in the examples above.
+
+For more information on how to use the refund function and the available parameters, you can refer to the Razorpay API documentation.
+
+I hope this helps! Let me know if you have any further questions.
+
+Was this response useful?
+
+
+
+razorpay class method for payment transfer of captured payment
+
+DOCS AI Symbol in blue color
+I apologize for the confusion, but as of my knowledge, Razorpay does not provide a specific class method for payment transfer of captured payments. However, you can achieve payment transfers by using the `transfers` API provided by Razorpay.
+
+To initiate a transfer, you can use the `create` method of the `transfers` API. Here is an example of how to initiate a transfer using different programming languages:
+
+Curl:
+curl
+curl -u [YOUR_KEY_ID]:[YOUR_KEY_SECRET] \
+-X POST \
+-H "Content-Type: application/json" \
+-d '{
+  "account": "acc_DGmCgTEa9OTQcX",
+  "amount": 50000,
+  "currency": "INR",
+  "notes": {
+    "description": "Payment Transfer"
+  }
+}' \
+https://api.razorpay.com/v1/transfers
+
+Java:
+java
+RazorpayClient razorpay = new RazorpayClient("[YOUR_KEY_ID]", "[YOUR_KEY_SECRET]");
+
+JSONObject transferRequest = new JSONObject();
+transferRequest.put("account", "acc_DGmCgTEa9OTQcX");
+transferRequest.put("amount", 50000);
+transferRequest.put("currency", "INR");
+JSONObject notes = new JSONObject();
+notes.put("description", "Payment Transfer");
+transferRequest.put("notes", notes);
+
+Transfer transfer = razorpay.transfers.create(transferRequest);
+
+PHP:
+php
+$api = new Api($key_id, $secret);
+
+$transfer = $api->transfer->create([
+  'account' => 'acc_DGmCgTEa9OTQcX',
+  'amount' => 50000,
+  'currency' => 'INR',
+  'notes' => [
+    'description' => 'Payment Transfer'
+  ]
+]);
+
+Python:
+python
+import razorpay
+client = razorpay.Client(auth=("YOUR_ID", "YOUR_SECRET"))
+
+transfer = client.transfer.create({
+  'account': 'acc_DGmCgTEa9OTQcX',
+  'amount': 50000,
+  'currency': 'INR',
+  'notes': {
+    'description': 'Payment Transfer'
+  }
+})
+
+Ruby:
+ruby
+require "razorpay"
+Razorpay.setup('YOUR_KEY_ID', 'YOUR_KEY_SECRET')
+
+transfer = Razorpay::Transfer.create({
+  account: 'acc_DGmCgTEa9OTQcX',
+  amount: 50000,
+  currency: 'INR',
+  notes: {
+    description: 'Payment Transfer'
+  }
+})
+
+Please note that you need to replace `[YOUR_KEY_ID]` and `[YOUR_KEY_SECRET]` with your actual Razorpay API key and secret key. Also, make sure to provide the correct account ID, amount, currency, and other necessary details for the transfer.
+
+For more information on how to initiate transfers using the Razorpay API, you can refer to the Razorpay API documentation.
+
+I hope this clarifies the process of initiating payment transfers using Razorpay. Let me know if you have any further questions.
+
+Was this response useful?
+
+
+
+Write an elaborate query and press enter to get an exact response
+to transfer funds to linked account
+java
+RazorpayClient razorpay = new RazorpayClient("[YOUR_KEY_ID]", "[YOUR_KEY_SECRET]");
+
+JSONObject transferRequest = new JSONObject();
+transferRequest.put("account", "acc_DGmCgTEa9OTQcX");
+transferRequest.put("amount", 50000);
+transferRequest.put("currency", "INR");
+JSONObject notes = new JSONObject();
+notes.put("description", "Payment Transfer");
+transferRequest.put("notes", notes);
+
+Transfer transfer = razorpay.transfers.create(transferRequest);

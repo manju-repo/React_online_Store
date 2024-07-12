@@ -9,11 +9,24 @@ const uiSlice=createSlice({
             state.cartIsVisible=!state.cartIsVisible;
         },
 
+        setCartVisibility(state,action){
+            state.cartIsVisible= action.payload;
+        },
+
         showNotification(state,action){
             state.notification={
              status:action.payload.status,
              title:action.payload.title,
              message:action.payload.message,
+            };
+            console.log(state.notification);
+        },
+
+        clearNotification(state,action){
+            state.notification={
+              status: '',
+              title: '',
+              message: '',
             };
         },
     },

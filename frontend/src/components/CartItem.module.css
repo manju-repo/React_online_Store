@@ -1,9 +1,17 @@
 .item {
   margin: 1rem 0;
-  background-color: #575757;
   padding: 1rem;
+  border:1px solid #ccc;
 }
 
+.itemdet{
+  display:flex;
+}
+
+.itemdet div{
+    width:30%;
+    align:center;
+}
 .item h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.75rem;
@@ -13,6 +21,11 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+}
+
+.item img {
+    height:100%;
+    width:50%
 }
 
 .details {
@@ -36,10 +49,19 @@
   font-size: 1rem;
   font-style: italic;
 }
+.itemstock {
+  font-weight: normal;
+  font-size: 1rem;
+  font-style: italic;
+}
+
+input {
+    height:2rem;
+}
 
 .actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin: 0.5rem 0;
 }
 
@@ -55,4 +77,10 @@
 .actions button:active {
   background-color: #4b4b4b;
   color: white;
+}
+
+.itemtype{
+    font-weight:bold;
+    font-family:"Comic Sans MS", cursive;
+    font-size:20px;
 }
