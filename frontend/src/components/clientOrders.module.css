@@ -27,6 +27,10 @@
     font-weight: bold;
 }
 
+ .heading {
+ color:white;
+}
+
 .order {
     display: flex;
     gap: 5px; /* Optional: adds spacing between columns */

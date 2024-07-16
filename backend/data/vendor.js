@@ -30,10 +30,7 @@ const remove=async(req,res,next)=>{
 const getAdminOrders = async (req, res, next) => {
     const { id } = req.params;
     console.log(id);
-    if (req.userData.userType !== 'admin') {
-        const error = new Error("You are not authorized user");
-        return next(error);
-    }
+
 
     try {
         const orderItems = await Vendor.aggregate([
@@ -58,6 +55,41 @@ console.log("order items", orderItems[0].clientOrders[3]);
     }
 };
 
+const changeOrderStatus = async (req, res, next) => {
+    try {
+       /* if (req.userData.userType !== 'admin') {
+            const error = new Error("You are not authorized user");
+            return next(error);
+        }*/
+        console.log(req.body);
+        const { orderIds, status, new_status } = req.body;
+        console.log(orderIds, status,req.userData.userId);
+
+        const orders = await Vendor.find({
+              order_id: { $in: orderIds },
+              vendor_id: req.userData.userId
+            });
+        console.log(orders);
+        if(orders.length===0){
+            console.log("invalid User");
+            const error = new Error("You are not authorized user");
+            return next(error);
+        }
+
+
+        const result = await Vendor.updateMany(
+          { order_id: { $in: orderIds } }, // Filter to match documents with _id in the orderIds array
+          { $set: { status: new_status } } // Update to set the status field
+        );
+
+        console.log(`Matched ${result.n} documents and modified ${result.nModified} documents.`);
+        res.json({success:true});
+      } catch(err) {
+        next(err);
+        res.json({success:false});
+   }
+};
 exports.add=add;
 exports.remove=remove;
 exports.getAdminOrders=getAdminOrders;
+exports.changeOrderStatus=changeOrderStatus;

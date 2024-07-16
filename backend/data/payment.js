@@ -2,6 +2,21 @@ const instance = require('../app.js');
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
 
+const createRazorpayAccount = async (userData) => {
+  try {
+    const response = await axios.post('https://api.razorpay.com/v1/accounts', userData, {
+      auth: {
+        username: process.env.RAZORPAY_API_KEY,
+        password: process.env.RAZORPAY_API_SECRET,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating Razorpay account:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
  const checkout= async(req,res) => {
 
     const options={
@@ -115,6 +130,7 @@ const paymentRefund = async (req, res) => {
     }
 };
 
+exports.createRazorpayAccount=createRazorpayAccount;
 exports.checkout=checkout;
 exports.paymentVerification=paymentVerification;
 exports.paymentTransfer=paymentTransfer;

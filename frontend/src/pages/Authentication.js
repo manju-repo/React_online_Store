@@ -39,19 +39,26 @@ let order='';
         email: formData.email,
         password: formData.password,
      };
-console.log(authData);
+
+     authData.user_type=formData.user_type;
+     console.log(authData);
+
      if(mode==='signup'){
         authData.firstname= formData.first_name;
         authData.lastname= formData.last_name;
 
+        if(authData.user_type==='admin' && (formData.account_number===formData.confirm_account_number))
+            authData.account_number=formData.account_number;
+
      //first created cart/wishlist/order and then signed up
-     const cart_id=JSON.parse(localStorage.getItem('cartId'));
-     if(cart_id)
-        authData.cart_id= cart_id;
-    else
-        authData.cart_id=null;
+        const cart_id=JSON.parse(localStorage.getItem('cartId'));
+         if(cart_id)
+            authData.cart_id= cart_id;
+        else
+            authData.cart_id=null;
     }
-console.log(authData);
+
+    console.log(authData);
      const response= await fetch('http://localhost:5000/user/'+ mode, {
       method: 'POST',
       headers: {
@@ -76,6 +83,13 @@ console.log(authData);
          // Handle the error message (e.g., display it to the user)
         // throw json({message:errorData.message},{status:500});
      }
+
+
+//for admin user sign up create razorpay account
+    try{
+    }
+    catch{
+    }
 
      try{
        const resData= await response.json();

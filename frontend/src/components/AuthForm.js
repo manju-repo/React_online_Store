@@ -7,9 +7,10 @@ import {
 } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import classes from './AuthForm.module.css';
-
+import {useState} from 'react';
 
 const AuthForm=({onSubmit})=>{
+const [userRole,setUserRole]=useState('customer');
 const {
     register,
     handleSubmit,
@@ -20,6 +21,7 @@ const {
 const navigate= useNavigate();
 
   const submitHandler = (data) => {
+    data.user_type=userRole;
     onSubmit(data);
   };
 
@@ -27,6 +29,13 @@ const navigate= useNavigate();
         console.log("in reset");
         navigate('/');
    };
+
+   const handleRole=(role,event)=>{
+   event.preventDefault();
+       setUserRole(role);
+  };
+
+
   const [searchParams] = useSearchParams();
   const isLogin = searchParams.get('mode') === 'login';
   //const isSubmitting = navigation.state === 'submitting';
@@ -38,7 +47,7 @@ const navigate= useNavigate();
 
           {!isLogin &&
        <>
-
+        <h3>Register as <a href="#" onClick={(event)=>handleRole('client',event)}>Customer</a> or <a href="#" onClick={(event)=>handleRole('admin',event)}>Seller</a></h3>
          <div className={classes.control}>
            <label htmlFor="first_name">First Name</label>
            <input type="text" id="first_name" name="first_name"
@@ -95,11 +104,37 @@ const navigate= useNavigate();
               {...register("confirm_password", { required: "confirm_password is required." })}
            />
            {errors.confirm_password && (
-                                <p className="errorMsg">{errors.confirm_password.message}</p>)}
+                <p className="errorMsg">{errors.confirm_password.message}</p>)}
          </div></>
          }
 
+        { !isLogin && userRole==='admin' &&
+        <>
+         <div className={classes.control}>
+           <label htmlFor="account_number">Account Number</label>
+           <input
+             id="account_number"
+             type="text"
+             name="account_number"
+              {...register("account_number", { required: "Account Number is required." })}
+           />
+           {errors.account_number && (
+                <p className="errorMsg">{errors.account_number.message}</p>)}
+         </div>
 
+         <div className={classes.control}>
+            <label htmlFor="confirm_account_number">Re-enter Account Number</label>
+            <input
+              id="confirm_account_number"
+              type="text"
+              name="confirm_account_number"
+               {...register("confirm_account_number", { required: "Re-enter Account Number" })}
+            />
+            {errors.confirm_account_number && (
+                 <p className="errorMsg">{errors.confirm_account_number.message}</p>)}
+          </div>
+         </>
+         }
 
 
 

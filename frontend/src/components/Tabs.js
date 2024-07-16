@@ -12,7 +12,7 @@ const Tabs = ({ children }) => {
         <div className={classes.tabs}>
              <div className={classes.tabList}>
                 {React.Children.map(children, (child, index) => (
-                    <button
+                    <button style={{color:'black'}}
                         className={`${classes.tab} ${activeTab === index ? classes.active : ''}`}
                         onClick={() => handleTabClick(index)}
                     >

@@ -38,13 +38,15 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 const mongoose = require("mongoose");
 try{
-mongoose.connect("mongodb://127.0.0.1:27017/MyStore",
+mongoose.connect(process.env.MONGODB_URI,
 {
   useNewUrlParser: true,
   useUnifiedTopology: true,});
-
+  console.log('Connected to MongoDB Atlas');
 }
-catch(err){console.log(err.message);}
+catch(err){
+    console.log("error connecting to mongoDB Atlas",err.message);
+}
 
 const itemRoutes = require('./routes/items');
 const fabricRoutes = require('./routes/fabrics');

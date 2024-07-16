@@ -158,7 +158,7 @@ const CartPage=()=>{
         </Modal>
     { !cartTotalItems &&
          (<div className={classes.shop} >
-         <button style={{borderRadius:'20px'}} onClick={handleReset}>Start Shopping</button>
+         <button style={{borderRadius:'20px',color:'black'}} onClick={handleReset}>Start Shopping</button>
          <img style={{height:'100px',width:'100px',borderRadius:'20px'}} src="https://i.pinimg.com/236x/f9/31/39/f931398e98f3566c894b675a1b51c602.jpg"/>
          </div>)
     }
