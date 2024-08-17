@@ -1,6 +1,6 @@
 const express = require('express');
 
-const {updateStock, checkStock, getProductDetails} = require('../data/store');
+const {updateStock, checkStock, getProducts, getProductDetails} = require('../data/store');
 const {
   isValidText,
   isValidDate,
@@ -9,6 +9,7 @@ const {
 
 const router = express.Router();
 
+router.get('/', getProducts);
 router.get('/:product_id', getProductDetails);
 router.get('/stock/:product_id', checkStock);
 router.put('/stock', updateStock);

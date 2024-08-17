@@ -1,6 +1,6 @@
 const express = require('express');
 
-const {  getUsers, getUser, signUp, login, setCartId, setWishlist, addOrder} = require('../data/user');
+const {  getUsers, getUser, signUp, login, setCartId, setWishlist, addOrder, createRazorpayAccount} = require('../data/user');
 const {
   isValidText,
   isValidDate,
@@ -16,6 +16,7 @@ router.post('/login', login);
 router.put('/cart', setCartId);
 router.put('/wishlist', setWishlist);
 router.put('/orders', addOrder);
+router.post('/createRazorpayAccount', createRazorpayAccount);
 
 
 

@@ -10,6 +10,7 @@ const AuthenticationPage=()=>{
 const authCtx=useContext(AuthContext);
 const navigate= useNavigate();
 const [errors, setErrors]=useState();
+if(authCtx.isLoggedIn) window.history.back();
 let mode='login';
 let order='';
         const searchParams = new URL(window.location.href).searchParams;
@@ -20,10 +21,8 @@ let order='';
              setErrors('Invalid login mode');
              return;
           }
-        /*if(mode==='logout'){
-            authCtx.logout();
-        }*/
-        redirect('/');
+
+        //redirect('/');
 
 
 
@@ -44,19 +43,42 @@ let order='';
      console.log(authData);
 
      if(mode==='signup'){
-        authData.firstname= formData.first_name;
-        authData.lastname= formData.last_name;
+        authData.name= formData.first_name + " " + formData.last_name;
+        authData.phone=formData.phone;
 
         if(authData.user_type==='admin' && (formData.account_number===formData.confirm_account_number))
+            authData.bus_name=formData.bus_name;
+            authData.bus_type=formData.bus_type;
+            authData.bus_category=formData.bus_category;
+            authData.bus_subcategory=formData.bus_subcategory;
+            authData.pan=formData.pan;
+            authData.gstin=formData.gstin;
+            authData.address=formData.address;
             authData.account_number=formData.account_number;
+            authData.account_holder_name=formData.account_holder_name;
+            authData.ifsc_code=formData.ifsc_code;
 
+     }
      //first created cart/wishlist/order and then signed up
-        const cart_id=JSON.parse(localStorage.getItem('cartId'));
-         if(cart_id)
-            authData.cart_id= cart_id;
-        else
-            authData.cart_id=null;
-    }
+    const cart_id=JSON.parse(localStorage.getItem('cartId'));
+     if(cart_id)
+        authData.cart_id= cart_id;
+    else
+        authData.cart_id=null;
+
+    const wishlist=JSON.parse(localStorage.getItem('wishlist'));
+     if(wishlist)
+        authData.wishlist= wishlist;
+    else
+        authData.wishlist=null;
+
+    const orders=JSON.parse(localStorage.getItem('orders'));
+     if(orders)
+        authData.orders= orders;
+    else
+        authData.orders=null;
+
+
 
     console.log(authData);
      const response= await fetch('http://localhost:5000/user/'+ mode, {
@@ -86,14 +108,25 @@ let order='';
 
 
 //for admin user sign up create razorpay account
-    try{
-    }
-    catch{
-    }
+ if(mode==='signup' && formData.user_type==='admin'){
 
+    try{
+        const acc_response= await fetch('http://localhost:5000/user/createRazorpayAccount', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(authData)
+         });
+        console.log(response);
+    }
+    catch(err){
+        console.log(err);
+    }
+}
      try{
        const resData= await response.json();
-console.log("json response ",resData);
+       console.log("json response ",resData);
        const token=resData.token;
        const userid=resData.userId;
        const usertype=resData.user_type;
@@ -112,7 +145,18 @@ console.log("json response ",resData);
            console.log(loggedUser);
            const user_cart= loggedUser.cart_id;
            const user_wl= loggedUser.wishlist;
-           const user_orders=loggedUser.orders;
+
+                const ordersResp=await fetch(`http://localhost:5000/orders/getActiveOrders/${userid}`,{
+                headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                },});
+                console.log(ordersResp);
+                if(!ordersResp)
+                    throw new Error('Could not fetch your orders');
+                const orders=await ordersResp.json();
+                const user_orders=orders.data;
+                console.log(user_orders);
 
            if(user_cart && JSON.parse(localStorage.getItem('cartId'))){
             if(user_cart != JSON.parse(localStorage.getItem('cartId'))){
@@ -133,7 +177,7 @@ console.log("json response ",resData);
                    localStorage.setItem('cartId',JSON.stringify(user_cart));
               }
            }
-           if(user_wl && JSON.parse(localStorage.getItem('wishlist'))){
+           if(user_wl && JSON.parse(localStorage.getItem('Wishlist'))){
               let concan=window.confirm("Do you want to replace your previous wishlist with the new one?");
               if(concan){
                    //user_wl=JSON.parse(localStorage.getItem('wishlist'));
@@ -169,10 +213,14 @@ console.log("json response ",resData);
        //authCtx.isAdmin=(usertype==='admin');
        //console.log("admin ",usertype);
        //console.log(authCtx.isAdmin);
-
         if(order && order==='open')
-         redirect('/');
-         navigate(-1);
+            window.history.back();
+
+        if(usertype==='admin'){
+            navigate("/clientOrders");
+        }
+        else
+            navigate("/homepage");
                console.log(token, userid, expiration);
 
         }catch(e){

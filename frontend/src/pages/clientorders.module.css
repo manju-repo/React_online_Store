@@ -36,29 +36,42 @@ p {
     margin: 0 0 20px 0;
 }
 
-.order{
-border:1px solid;
-}
-.label {
-    font-weight:bold;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around; /* Space items evenly */
-    align-items: center; /* Center items vertically */
-    width: 100%; /* Full width of the container */
-    margin-bottom: 10px; /* Add some space below the labels */
+.orderContainer {
+border-bottom: 1px solid;
+align-items:left;
+  justify-content: space-between;
+  margin-bottom: 10px; /* Adjust spacing between orders if needed */
 }
 
-.label span {
-    flex: 1; /* Each span will take an equal amount of space */
-    text-align: center; /* Center text horizontally */
+.orderSpan {
+  text-align:left;
+  margin-right:100px;
 }
+
+.grid_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust minmax value as per your need */
+    gap: 20px; /* Adjust spacing between items */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.grid_item {
+    background-color: #f0f0f0; /* Example background color */
+    padding: 20px; /* Adjust padding inside items */
+    border: 1px solid #ccc; /* Optional: Border around each item */
+    border-radius: 8px; /* Optional: Rounded corners */
+}
+
+
 
 .order_summary {
     display: flex;
     flex-direction: row;
     justify-content: space-around; /* Space items evenly */
     align-items: center; /* Center items vertically */
+    text-align:center;
     width:700px; /* Full width of the container */
     margin-bottom: 10px; /* Add some space below the order summaries */
 }
@@ -66,4 +79,9 @@ border:1px solid;
 .order_summary span {
     flex: 1; /* Each span will take an equal amount of space */
     text-align: center; /* Center text horizontally */
+}
+
+ button{
+    width:8rem;
+    height:2rem;
 }

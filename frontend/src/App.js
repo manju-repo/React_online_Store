@@ -16,6 +16,7 @@ import RootLayout from './pages/root';
 import ErrorPage from './pages/Error';
 import AuthenticationPage from './pages/Authentication';
 import OrderPage from './pages/Order';
+import OrderItemTrack from './pages/order_item_track';
 import { Fragment, useEffect } from 'react';
 import Cart from './components/Cart';
 import Notification from './components/notification';
@@ -31,10 +32,11 @@ import PaymentForm from './components/PaymentForm';
 import ClientOrders from './pages/ClientOrders'
 import Form2FA from './components/Form2FA';
 import ProtectedRoute from './components/ProtectedRoute';
-
+import AutoLogoutRedirect from './autoLogout-redirect';
+import SearchItems from './components/SearchItems.js';
 const App=()=> {
   const { token, login, logout, userId, isLoggedIn, isAdmin} = useAuth();
-  const {item,totalQuantity,totalAmount,status,orderId,createOrder,updateStatus, clearContext} = useOrder();
+  const {item,totalQuantity,totalAmount,status,orderId, paymentId, createOrder,updateStatus, updateItemDetails, updatePaymentDetails, clearContext} = useOrder();
   const [is2FAuthenticated,setIs2FAuthenticated] = useState(false);
   const [orders,setOrders]=useState([]);
   const [wishlist,setWishlist] = useState([]);
@@ -43,6 +45,7 @@ const App=()=> {
   const cart = useSelector((state) => state.cart);
 
   useEffect(()=>{
+  console.log(isLoggedIn);
         const fetchUserData=async()=>{
           dispatch(fetchCartData(JSON.parse(localStorage.getItem('cartId'))||null,userId));
           setWishlist(JSON.parse(localStorage.getItem('Wishlist'))||[]);
@@ -50,7 +53,7 @@ const App=()=> {
 console.log(isLoggedIn);
     }
     fetchUserData();
-  },[userId]);
+  },[userId],wishlist,orders);
 
 
 
@@ -70,15 +73,18 @@ const router = createBrowserRouter([
       { path: '/store/:category' ,element: <FabricsPage />},
       { path: '/store/:category/:sub_category' ,element: <FabricsPage />},
       { path: '/fabrics/:fabricId/:category', element: <FabricDetailPage />},
-        { path: '/fabrics/new/:itemCategory', element: <ProtectedRoute element={<FabricForm />} requiredRole="admin" /> },
-        { path: '/clientorders', element: <ClientOrders /> },
+      { path: '/fabrics/new/:itemCategory', element: <ProtectedRoute element={<FabricForm />} requiredRole="admin" /> },
+      { path: '/clientorders', element: <ProtectedRoute element={ <ClientOrders />}/>},
+      //{ path: '/clientorders', element: <ClientOrders />},
      // { path: '/Form2FA', element: <Form2FA />} ,
       { path: '/cart', element: <CartPage />},
       { path: '/wishlist', element: <WishlistPage />},
       { path: '/order/:orderId', element: <OrderPage />},
       { path: '/user', element: <AuthenticationPage />},
       { path: '/payment', element: <PaymentForm />},
-      { path: '/paymentsuccess/:rzrOrderId/:paymentId', element: <PaymentSuccess />}
+      { path: '/paymentsuccess/:rzrOrderId/:paymentId', element: <PaymentSuccess />},
+      { path: '/order_item_track/:order_id/:item_id', element: <ProtectedRoute element={<OrderItemTrack/> }/>},
+      { path: '/searchItems', element:<SearchItems/>}
     ],
   }
 ]);
@@ -89,8 +95,8 @@ const router = createBrowserRouter([
                                     userId: userId,login: login,logout: logout, is2FAuthenticated}}>
 
     <OrderContext.Provider value={{ item:item||[], totalQuantity:totalQuantity,
-                                    totalAmount:totalAmount, status:status, orderId:orderId,
-                                    createOrder:createOrder, updateStatus, clearContext, orders}}>
+                                    totalAmount:totalAmount, status:status, orderId:orderId, paymentId:paymentId,
+                                    createOrder:createOrder, updateStatus, clearContext,updateItemDetails, updatePaymentDetails, orders}}>
 
      <WishlistContext.Provider value={{ wishlist:wishlist||[], updateWishlist}}>
 

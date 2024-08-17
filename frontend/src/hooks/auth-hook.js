@@ -8,6 +8,7 @@ export const useAuth=()=>{
     const [isAdmin, setIsAdmin]= useState(false);
 
     const login=useCallback((uid, token, expirationDate,userType)=> {
+    console.log(uid, token, expirationDate, userType);
       setToken(token);
       setUserId(uid);
       setIsLoggedIn(true);

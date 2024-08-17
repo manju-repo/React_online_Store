@@ -13,7 +13,7 @@ console.log(isLoggedIn);
   if (requiredRole && requiredRole === 'admin' && !isAdmin) {
     throw { status: 403, message: 'Unauthorized' }; // Throwing an error for unauthorized access
   }
-
+if(isLoggedIn)
   return element;
 };
 

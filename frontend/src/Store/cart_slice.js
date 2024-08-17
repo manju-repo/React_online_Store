@@ -26,19 +26,23 @@ const cartSlice=createSlice({
             console.log("pushing new item");
                state.items.push({
                 id:newItem.id,
+                item_status:'created',
                 quantity:quantity,
                 rate:newItem.rate,
-                totalPrice:newItem.rate*quantity,
+                amount:newItem.rate*quantity,
                 type:newItem.type,
                 image:newItem.image,
                 created_by:newItem.created_by,
                 category:newItem.category,
+                sub_category:newItem.sub_category,
+                desc:newItem.desc,
+                details:newItem.details,
                 alloted_stock:quantity
             });
                 //state.totalQuantity++;
             }else{
                 existingItem.quantity=quantity;
-                existingItem.totalPrice=quantity*newItem.rate;
+                existingItem.amount=quantity*newItem.rate;
                 existingItem.alloted_stock=existingItem.alloted_stock+(quantity-existingItem.alloted_stock);
             }
             //state.totalAmount+=Number(quantity)*Number(newItem.rate);
@@ -51,7 +55,7 @@ const cartSlice=createSlice({
                     }, 0);
 
             state.totalAmount = state.items.reduce((total, item) => {
-               return total + item.totalPrice;
+               return total + item.amount;
             }, 0);
             console.log(state.items, state.totalQuantity, state.totalAmount);
             state.changed=true;
@@ -71,14 +75,14 @@ const cartSlice=createSlice({
                                 return {
                                   ...item,
                                 quantity: item.quantity - 1,
-                                totalPrice: item.totalPrice - item.rate,
+                                amount: item.amount - item.rate,
                                 alloted_stock: item.quantity-1
                                 }
                             else
                             return {
                                   ...item,
                                 quantity: item.quantity - 1,
-                                totalPrice: item.totalPrice - item.rate,
+                                amount: item.amount - item.rate,
                                 alloted_stock: item.alloted_stock-1
                                 }
                         }
@@ -101,7 +105,7 @@ const cartSlice=createSlice({
                         }, 0);
             //state.totalQuantity=state.items.length;
             state.totalAmount = state.items.reduce((total, item) => {
-               return total + item.totalPrice;
+               return total + item.amount;
             }, 0);
             state.changed=true;
           console.log(state.items);
@@ -128,25 +132,7 @@ const cartSlice=createSlice({
             });
             console.log(state.items);
         }
-       /* findCartTotal(state,action){
-            state.totalAmount = state.items.reduce((total, item) => {
-               return total + item.totalPrice;
-            }, 0);
-        },
 
-        changeCartItem(state,action){
-            const id=action.payload.id;
-            const qty=action.payload.quantity;
-            if(qty===0){
-                state.items=state.items.filter((item)=>item.id !== id);
-                state.totalQuantity--;
-            }else{
-                const existingItem=state.items.find((item)=>item.id===id);
-                existingItem.quantity=Number(qty);
-                existingItem.amount=Number(qty)*(existingItem.rate);
-            }
-            state.changed=true;
-        }*/
     }
 });
 

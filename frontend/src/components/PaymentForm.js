@@ -8,6 +8,7 @@ import {
 import { useForm } from 'react-hook-form';
 import {useContext} from 'react';
 import {OrderContext} from '../Context/order-context';
+import {AuthContext} from '../Context/auth-context';
 import classes from './paymentform.module.css';
 import Modal from './Modal';
 
@@ -22,16 +23,28 @@ const PaymentForm=({onSubmit})=>{
 
 const navigate= useNavigate();
 const {item, clearContext,orderId, orders}=useContext(OrderContext);
+const {isLoggedIn, userId, token}=useContext(AuthContext);
+
+
   const submitHandler = (data) => {
     onSubmit(data);
   };
 
-   const resetHandler=()=>{
+   const resetHandler=async()=>{
 
         const index = orders.findIndex(order => order === orderId);
         if (index !== -1) {
           orders.splice(index, 1);
         }
+
+       const response=await fetch('http://localhost:5000/orders/deleteOrder',{
+       method:'PUT',
+                   headers:{
+                           'Authorization': `Bearer ${token}`,
+                           'content-type':'application/json'},
+
+                   body:JSON.stringify({id:orderId})
+       });
 
        clearContext();
 

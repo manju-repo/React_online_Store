@@ -123,7 +123,6 @@ const authCtx=useContext(AuthContext);
     }
   }
    const resetHandler=()=>{
-        console.log("in reset ",category[CategoryIndex].value);
         navigate('/store/'+category[CategoryIndex].value);
    };
    return (
@@ -131,8 +130,14 @@ const authCtx=useContext(AuthContext);
    <div className={classes.container}>
      <form className={classes.form}>
     <table><tbody className={classes.control}>
+
          <tr>
-           <td><label htmlFor="category">Category type</label></td>
+               <td><label htmlFor="product_code">Product Code</label></td>
+               <td><input type="text" id="product_code" name="product_code" defaultValue={mode==='edit' ? item.product_code:''}
+                 {...register("product_code", { required: "product_code is required." })}  /></td></tr>
+            { errors.product_code && <tr><td></td><td colspan="2"><p className={classes.errorMsg}>{errors.product_code.message}</p></td></tr>}
+         <tr>
+           <td><label htmlFor="category">Category</label></td>
            <td><Controller
                name="category"
                control={control}

@@ -98,6 +98,9 @@ const FabricItemOrder=(props)=>{
                                                 image,
                                                 created_by,
                                                 category,
+                                                sub_category,
+                                                desc,
+                                                details,
                                                 quantity:quantity}}));
 
         dispatch(uiActions.setCartVisibility(true));
@@ -160,7 +163,7 @@ const FabricItemOrder=(props)=>{
      return;
     }
     const amount=rate*quantity;
-    const order_item={id,type,rate,image,quantity,amount,created_by,category,sub_category,details,desc};
+    const order_item={id,item_status:'created',type,rate,image,quantity,amount,created_by,category,sub_category,details,desc};
 
     try{
     //check Stock in store for order_item
@@ -199,43 +202,42 @@ const FabricItemOrder=(props)=>{
   };
 return(
 <>
-<section className={classes.section}>
+<section className={classes.section} style={{marginTop:'50px',alignItems:'left'}}>
     <form>
     <div className={classes.disp}>
         {stockMsg && <div className={classes.message}>{stockMsg}</div>}
 
     {category && category.toLowerCase()==='fabrics' && (<>
-    <div>{desc}</div>
-    <div><span>Price:</span><span>{rate} </span><span>Rs/meter</span></div>
-    <div><span> Quantity:</span><span><input disabled={stock<=0} style={{width:'100px'}} onChange={handleChange} name="qty" type="text"  /></span><span>meter</span></div>
-     <div><span style={{fontSize:'12px'}}>Minimum Order 1 meter</span></div></>)}
+    <div style={{color:'black'}}>{desc}</div>
+    <div><span style={{color:'black'}}>Price:</span><span>{rate} </span><span style={{color:'black'}}>Rs/meter</span></div>
+    <div><span  style={{color:'black'}}> Quantity:</span><span style={{color:'black'}}><input disabled={stock<=0} style={{width:'100px'}} onChange={handleChange} name="qty" type="text"  /></span><span style={{color:'black'}}>meter</span></div>
+    <div><span style={{color:'black',fontSize:'12px'}}>Minimum Order 1 meter</span></div></>)}
 
     {category && category.toLowerCase()!=='fabrics' && (<>
-    <div>{desc}</div>
-    <div><span>Price:</span><span>Rs</span><span>{rate}/- </span></div>
-    <div><span> Quantity:</span><span><input disabled={stock<=0} style={{width:'100px'}} onChange={handleChange} name="qty" type="text"  /></span></div></>)}
+    <div style={{color:'black'}}>{desc}</div>
+    <div><span  style={{color:'black'}}>Price:</span><span style={{color:'black'}}>Rs</span><span style={{color:'black'}}>{rate}/- </span></div>
+    <div><span style={{color:'black'}}> Quantity:</span><span style={{color:'black'}}><input disabled={stock<=0} style={{width:'100px'}} onChange={handleChange} name="qty" type="text"  /></span></div></>)}
 
 
 
 
-    {Array.isArray(details) &&
+    {Array.isArray(details) && details.length>0 &&
      <div className={classes.details}>
-        <div>Product details</div>
-        <div>{details[0]}</div>
-        <div>{details[1]}</div>
+        <div style={{color:'black'}}>Product details:</div>
+        <div style={{color:'black'}}>{details[0]}</div>
+        <div style={{color:'black'}}>{details[1]}</div>
      </div>}
 
       <div className={classes.actions}>
-         <button disabled={stock<=0} onClick={addToCart}>ADD TO CART</button>
-         <button disabled={stock<=0} onClick={checkoutHandler}>BUY IT NOW</button>
+         <button style={{color:'black',fontSize:'10px'}} disabled={stock<=0} onClick={addToCart}>ADD TO CART</button>
+         <button  style={{color:'black',fontSize:'10px'}}disabled={stock<=0} onClick={checkoutHandler}>BUY IT NOW</button>
      </div>
       <div className={classes.actions}>
       {(wishlist && (wishlist.filter((itm)=>itm===String(id))).length!==0) ?
           (<i onClick={()=>wishlistHandler(id)} style={{color:'red',verticalAlign:'middle', fontSize:'30px'}}class="fa-regular fa-heart"></i>)
-        :(<i onClick={()=>wishlistHandler(id)} style={{color:'white',verticalAlign:'middle', fontSize:'30px'}}class="fa-regular fa-heart"></i>)}
+        :(<i onClick={()=>wishlistHandler(id)} style={{color:'black',verticalAlign:'middle', fontSize:'30px'}}class="fa-regular fa-heart"></i>)}
       </div>
-      <div className={classes.actions}>
-      </div>
+
      </div>
     </form>
     </section>

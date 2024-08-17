@@ -45,6 +45,7 @@
       display:flex;
       color:black;
       width:100%;
+      textDecoration: 'none';
 }
 
 .tabs {
@@ -90,4 +91,9 @@
 
 .button_link:focus {
     outline: none;
+}
+
+a {
+  text-decoration: none !important;
+  border:none;
 }

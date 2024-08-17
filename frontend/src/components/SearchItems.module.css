@@ -1,0 +1,24 @@
+.grid_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjust minmax value as per your need */
+    gap: 20px; /* Adjust spacing between items */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.grid_item {
+    background-color: #f0f0f0; /* Example background color */
+    padding: 10px; /* Adjust padding inside items */
+    border: 1px solid #ccc; /* Optional: Border around each item */
+    border-radius: 8px; /* Optional: Rounded corners */
+    overflow: hidden; /* Prevents overflow of content */
+    word-wrap: break-word; /* Wraps long words onto the next line */
+}
+
+.grid_item div {
+    text-align:center;
+    overflow: hidden; /* Prevents the description from overflowing */
+    white-space: nowrap; /* Prevents the text from wrapping onto multiple lines */
+    text-overflow: ellipsis; /* Adds ellipsis (...) when text overflows */
+}

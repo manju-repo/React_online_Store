@@ -6,8 +6,12 @@ export const OrderContext= createContext({
     totalAmount:0,
     status:null,
     orderId:null,
+    paymentId:null,
+
     createOrder:()=>{},
     updateStatus:()=>{},
     clearContext:()=>{},
+    updatePaymentDetails:()=>{},
+    updateItemDetails:()=>{},
     orders:[]
 });

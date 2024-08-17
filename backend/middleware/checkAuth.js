@@ -8,13 +8,13 @@ module.exports=(req, res, next)=>{
       }
     try{
         const token=req.headers.authorization.split(' ')[1];    //Authorization: 'Bearer TOKEN'
-        console.log(token);
+        //console.log(token);
         if(!token){
             console.log('No token found');
             return res.status(403).json({success:false,message:'You are not authorized to add/edit/delete items'});
         }
         const decodedToken = jwt.verify(token,'supersecret_dont_share');
-        console.log('Token decoded', decodedToken);
+        //console.log('Token decoded', decodedToken);
         req.userData={ userId: decodedToken.userId , userType: decodedToken.userType};
         //console.log(req.userData);
         next();

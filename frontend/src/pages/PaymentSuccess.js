@@ -116,7 +116,7 @@ console.log("in PS");
             if(!resData.success){
                 throw Error(resData.message);
             }
-            const payment_response=await fetch('http://localhost:5000/orders/updatestatus',{
+            const payment_response=await fetch('http://localhost:5000/orders/cancelOrder',{
                         method:'PUT',
                         headers:{
                                 'Authorization': `Bearer ${token}`,
@@ -139,7 +139,7 @@ console.log("in PS");
 
 
     return (<><div><Link to="/">Go to Homepage</Link>
-               <span ><Link onClick={cancelOrderHandler} style={{ marginRight: '10px' }}>Cancel Order</Link></span>
+               <span ><Link onClick={cancelOrderHandler} style={{ marginRight: '10px',textDecoration:'none'}}>Cancel Order</Link></span>
     </div>
     {cancelMsg && ( <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', width: '100%' }}>
                                               <p>{cancelMsg}</p></div>)}
@@ -159,7 +159,7 @@ console.log("in PS");
         <div key={itm.id} style={{ display: 'flex', alignItems: 'center' }}>
         <img src={itm.image} style={{ width: '100px', height: '100px' }}  alt="" />
         <span>{itm.type}
-            <div>Rs. {itm.rate?.toFixed(2)} /meter</div>
+            <div>Rs. {itm.rate?.toFixed(2)} /pcs</div>
         </span>
         {itm.category.toLowerCase()!=='fabrics' && <span><div>{itm.quantity} pcs</div></span>}
         {itm.category.toLowerCase()==='fabrics' && <span><div>{itm.quantity} meter</div></span>}

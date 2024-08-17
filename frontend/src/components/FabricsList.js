@@ -88,7 +88,6 @@ return()=>{
         alert("You are not authorized to add items");
         return;
     }
-    alert(`/fabrics/new/${category}`);
     navigate(`/fabrics/new/${category}`);
    }
 
@@ -109,7 +108,7 @@ return()=>{
       <div key={item._id} className={`${classes.responsive} ${classes.item}`}>
 
      <li key={item._id} className={classes.item}>
-        <NavLink to={{pathname:`/fabrics/${item._id}/${item.category}` }}  className={({isActive})=>isActive?classes.active:undefined}end>
+        <NavLink to={{pathname:`/fabrics/${item._id}/${item.category}` }}  className={({isActive})=>isActive?classes.linkActive : classes.link}end>
             <img style={{width:'250px',height:'250px'}} src={item.image[0]} alt="Cinque Terre"/>
             <div className={classes.desc}>{item.desc}</div>
         </NavLink>
@@ -120,7 +119,7 @@ return()=>{
       <div key={item._id} className={`${classes.responsive} ${classes.item}`}>
 
      <li key={item._id}  className={classes.item}>
-        <NavLink to={{pathname:`/fabrics/${item._id}/${item.category}` }}  className={({isActive})=>isActive?classes.active:undefined}end>
+        <NavLink to={{pathname:`/fabrics/${item._id}/${item.category}` }}  className={({isActive})=>isActive?classes.linkActive : classes.link}end>
         {item.category.toLowerCase()==='fabrics' && <img style={{width:'250px',height:'250px'}} src={item.image[0]} alt="Cinque Terre"/>}
         {item.category.toLowerCase()!=='fabrics' && <img style={{width:'300px',height:'350px'}} src={item.image[0]} alt="Cinque Terre"/>}
         <div className={classes.desc}>{item.desc}</div></NavLink>

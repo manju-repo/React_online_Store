@@ -1,13 +1,13 @@
 const User = require("../models/User");
 const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken');
+const axios = require('axios');
 
 //getUsers============================================================
 
 const getUsers=async(req,res,next)=>{
     let users;
     try{
-    console.log("data");
          users=await User.find({},'-password');
     }catch(err){
         const error= new Error("Could not fetch users");
@@ -16,7 +16,6 @@ const getUsers=async(req,res,next)=>{
      if (!users) {
         throw new NotFoundError('Could not find any data.');
      }
-    console.log(users);
     res.json({ users: users.map(user => user.toObject({ getters: true })) });
 }
 
@@ -34,20 +33,66 @@ const getUser=async(req,res,next)=>{
      if (!user) {
         throw new NotFoundError('Could not fetch User');
      }
-    console.log(user);
     res.json({ success:true,user: user.toObject({ getters: true }) });
 }
+
+const createRazorpayAccount = async (req,res,next) => {
+const userData=req.body;
+console.log(userData);
+  try {
+    let contactData= {};
+    let bankData={};
+
+    contactData.name=userData.firstname+" "+ userData.lastname;
+    contactData.email=userData.email;
+    contactData.contact=userData.phone;
+    contactData.type="vendor";
+    contactData.reference_id="J'adore "+ userData.phone;
+        bankData.bank_account={name:userData.firstname+" "+ userData.lastname ,ifsc:userData.ifsc_code ,account_number:userData.account_number};
+console.log("bank data:", bankData);
+
+    const response = await axios.post('https://api.razorpay.com/v1/contacts', contactData, {
+      auth: {
+        username: process.env.RAZORPAY_API_KEY,
+        password: process.env.RAZORPAY_API_SECRET,
+      },
+    });
+    const contact_id= response.data.id;
+    //console.log("contact id ",contact_id);
+console.log("cd: ", contactData);
+
+ console.log("ud: ", userData);
+    bankData.contact_id=contact_id;
+    bankData.account_type="bank_account";
+console.log("bank data:", bankData);
+     const acc_response = await axios.post('https://api.razorpay.com/v1/fund_accounts', bankData, {
+     auth: {
+        username: process.env.RAZORPAY_API_KEY,
+        password: process.env.RAZORPAY_API_SECRET,
+      },
+    });
+      console.log("fund acc ", acc_response.data.id);
+      res.json({success:true,data:acc_response.data});
+    }
+   catch (error) {
+    console.error('Error creating Razorpay account:');
+    return next(error);
+  }
+};
 
 //signup=================================================================
 
 const signUp=async(req,res,next)=>{
-    const {firstname,lastname,email,password,cart_id,user_type}=req.body;
-//console.log(firstname,lastname,email,password,cart_id);
+    const {name, email, password, phone, user_type}=req.body;
+    const {bus_type, bus_name, bus_category, bus_subcategory, pan, gstin, address}=req.body;
+    const {account_number,account_holder_name,ifsc_code,wishlist,cart_id,orders}=req.body;
+
     let existingUser;
     try{
         existingUser=await User.findOne({email:email});
     }catch(err){
         const error= new Error("Sign Up failed");
+        console.log(err);
         return next(error);
     }
     if(existingUser){
@@ -66,18 +111,16 @@ console.log(err);
     }
 
     const createdUser=new User({
-        firstname,
-        lastname,
-        email,
-        password: hashedPassword,
-        cart_id,
-        user_type,
+        name, email, password:hashedPassword, phone, user_type,
+        bus_type, bus_name, bus_category, bus_subcategory, pan, gstin, address,
+        account_number, account_holder_name, ifsc_code, wishlist, cart_id, orders
     });
 
     try{
         await createdUser.save();
     }catch(err){
         const error=new Error("Sign up failed, please try again later.");
+        console.log(err);
         return next(error);
     }
 
@@ -91,11 +134,12 @@ console.log(err);
         );
     }catch(err){
         const error=new Error("Sign up failed, please try again later");
+        console.log(err);
         return next(error);
     }
-    if(cart_id){
+    /*if(cart_id){
             existingUser.cart_id=cart_id;
-    }
+    }*/
 
     res.json({
          userId: createdUser.id,
@@ -114,34 +158,29 @@ const login= async(req, res, next)=>{
     try{
         existingUser=await User.findOne({email:email});
     }catch(err){
-console.log(err);
         const error=new Error("Login failed! Please try again later.");
         return next(error);
     }
     if(!existingUser){
-    console.log("user not found");
         const error=new Error("User does not exist");
         return next(error);
     }
-console.log("user found");
+
     let isValidPassword;
     try{
         isValidPassword=await bcrypt.compare(password, existingUser.password);
     }catch(err){
-console.log(err);
         const error=new Error("Invalid credentials, please try again");
         return next(error);
     }
     if(! isValidPassword){
-console.log("password invalid");
         const error=new Error("Invalid credentials, could not log you in.");
         return next(error);
     }
-console.log("password hashed")
     let token;
     try{
         token=jwt.sign(
-        {userId: existingUser.id,email: existingUser.email,userType: existingUser.user_type},
+        {userId: existingUser.id, email: existingUser.email, userType: existingUser.user_type},
         'supersecret_dont_share',
         {expiresIn: '1h'}
         );
@@ -154,15 +193,14 @@ console.log(err);
     if(!existingUser.cart_id && cart_id){
         existingUser.cart_id=cart_id;
     }
-console.log("before save");
+
     try{
         await existingUser.save();
     }catch(err){
-console.log(err);
         const error=new Error("Login failed, please try again later.");
         return next(error);
     }
-console.log("return from user data");
+
     res.json({
          userId: existingUser.id,
          user_type:existingUser.user_type,
@@ -249,3 +287,4 @@ const addOrder=async(req,res,next)=>{
     exports.setCartId=setCartId;
     exports.setWishlist=setWishlist;
     exports.addOrder=addOrder;
+    exports.createRazorpayAccount=createRazorpayAccount;

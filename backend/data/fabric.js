@@ -49,8 +49,8 @@ const add=async(req,res,next)=>{
     if (req.userData.userType !== 'admin'){
        return res.status(403).json({success:false,message:'You are not authorized to add items'});
     }
-    const {category,sub_category,type,image,desc,colour,colour_options,stock,details,created_by} = req.body;
-    const createdItem=new Fabric({category, sub_category, type, image, desc, colour, colour_options, price, stock, details, created_by});
+    const {product_code,category,sub_category,type,image,desc,colour,colour_options,stock,details,created_by} = req.body;
+    const createdItem=new Fabric({product_code,category, sub_category, type, image, desc, colour, colour_options, price, stock, details, created_by});
     try{
         await createdItem.save();
     }
@@ -61,11 +61,11 @@ const add=async(req,res,next)=>{
 };
 
 async function put(req,res,next){
-const {category,sub_category,type,desc,price,image,colour,colour_options,stock, details,created_by}=req.body;
+const {product_code,category,sub_category,type,desc,price,image,colour,colour_options,stock, details,created_by}=req.body;
 const id=req.params.id;
     //console.log("from data PUT "+id, category,sub_category,type,desc,colour,colour_options,details,stock,created_by,price,image);
    try{
-        const updatedItem=await Fabric.findByIdAndUpdate(id,{category:category, sub_category:sub_category, type:type, desc:desc, colour:colour,
+        const updatedItem=await Fabric.findByIdAndUpdate(id,{product_code:product_code, category:category, sub_category:sub_category, type:type, desc:desc, colour:colour,
         colour_options:colour_options, price:price, stock:stock, details:details, image:image, created_by:created_by});
         res.status(201).json({success:true, message:'item updated', data:updatedItem.id});
     }

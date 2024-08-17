@@ -10,7 +10,7 @@ import classes from './AuthForm.module.css';
 import {useState} from 'react';
 
 const AuthForm=({onSubmit})=>{
-const [userRole,setUserRole]=useState('customer');
+const [userRole,setUserRole]=useState('client');
 const {
     register,
     handleSubmit,
@@ -38,16 +38,47 @@ const navigate= useNavigate();
 
   const [searchParams] = useSearchParams();
   const isLogin = searchParams.get('mode') === 'login';
-  //const isSubmitting = navigation.state === 'submitting';
+
    return (
-   <div className={classes.container}>
+<div className={`${classes.container} ${!isLogin && userRole === 'admin' ? classes.container1 : ''}`}>
      <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>
 
-        <h1>{isLogin ? 'Sign in' : 'Create a new user'}</h1>
+        <h3 style={{align:'center'}}>{isLogin ? 'Sign in' : ''}</h3>
+        {isLogin?(
+        <>
+               <div className={classes.control}>
+                 <label htmlFor="email">Email</label>
+                 <input id="email" type="email" name="email"
+                 {...register("email", {
+                       required: "Email is required.",
+                       pattern: {
+                         value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                         message: "Email is not valid."
+                       }
+                     })}
+                   />
+                 {errors.email && <p className="errorMsg">{errors.email.message}</p>}
+               </div>
 
-          {!isLogin &&
-       <>
-        <h3>Register as <a href="#" onClick={(event)=>handleRole('client',event)}>Customer</a> or <a href="#" onClick={(event)=>handleRole('admin',event)}>Seller</a></h3>
+                 <div className={classes.control}>
+                   <label htmlFor="password">Password</label>
+                   <input id="password" type="password" name="password"
+                   {...register("password", {
+                     required: "Password is required.",
+                     minLength: {
+                       value: 6,
+                       message: "Password should be at-least 6 characters."
+                     }
+                   })}
+                 />
+                  {errors.password && (<p className="errorMsg">{errors.password.message}</p>)}
+                 </div>
+            </>
+            ):(
+<>
+        <h3>Sign up as <a href="#" onClick={(event)=>handleRole('client',event)}>Customer</a> or <a href="#" onClick={(event)=>handleRole('admin',event)}>Seller</a></h3>
+         {(userRole==='client')?(
+            <>
          <div className={classes.control}>
            <label htmlFor="first_name">First Name</label>
            <input type="text" id="first_name" name="first_name"
@@ -61,10 +92,8 @@ const navigate= useNavigate();
              {...register("last_name", { required: "Last name is required." })}  />
           {errors.last_name && <p className="errorMsg">{errors.last_name.message}</p>}
          </div>
-       </>
-       }
-        <>
-       <div className={classes.control}>
+
+        <div className={classes.control}>
          <label htmlFor="email">Email</label>
          <input id="email" type="email" name="email"
          {...register("email", {
@@ -78,6 +107,83 @@ const navigate= useNavigate();
          {errors.email && <p className="errorMsg">{errors.email.message}</p>}
        </div>
 
+        <div className={classes.control}>
+          <label htmlFor="password">Password</label>
+          <input id="password" type="password" name="password"
+          {...register("password", {
+            required: "Password is required.",
+            minLength: {
+              value: 6,
+              message: "Password should be at-least 6 characters."
+            }
+          })}
+        />
+         {errors.password && (<p className="errorMsg">{errors.password.message}</p>)}
+        </div>
+
+         <div className={classes.control}>
+           <label htmlFor="confirm_password">Confirm Password</label>
+           <input
+             id="confirm_password"
+             type="password"
+             name="confirm_password"
+              {...register("confirm_password", { required: "confirm_password is required." })}
+           />
+           {errors.confirm_password && (<p className="errorMsg">{errors.confirm_password.message}</p>)}
+         </div>
+         <div className={classes.control}>
+            <label htmlFor="phone">Phone</label>
+            <input
+              id="phone"
+              type="text"
+              name="phone"
+               {...register("phone", { required: "Phone Number is required." })}
+            />
+            {errors.phone && (
+                 <p className="errorMsg">{errors.phone.message}</p>)}
+          </div>
+
+          <div className={classes.control}>
+            <label htmlFor="address">Address</label>
+            <div className={classes.addressRow}>
+                  <input  type="text" id="address1" name="address1" {...register("address.0",{ required: "Enter atleast one address field." })} />
+                   <div><input type="text" id="address2" name="address2" {...register("address.1")} /></div>
+                   <div><input type="text" id="address3" name="address" {...register("address.2")} /></div>
+                   <div>  {errors.address && (<p className="errorMsg">{errors.address.message}</p>)}</div>
+          </div>
+          </div>
+          </>
+         ):(
+         <>
+         <fieldset><legend>Personal Details</legend>
+         <div className={classes.control}>
+            <label htmlFor="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name"
+               {...register("first_name", { required: "First name is required." })}  />
+           {errors.first_name && <p className="errorMsg">{errors.first_name.message}</p>}
+          </div>
+
+          <div className={classes.control}>
+            <label htmlFor="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name"
+              {...register("last_name", { required: "Last name is required." })}  />
+           {errors.last_name && <p className="errorMsg">{errors.last_name.message}</p>}
+          </div>
+
+        <div className={classes.control}>
+             <label htmlFor="email">Email</label>
+             <input id="email" type="email" name="email"
+             {...register("email", {
+                   required: "Email is required.",
+                   pattern: {
+                     value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                     message: "Email is not valid."
+                   }
+                 })}
+               />
+             {errors.email && <p className="errorMsg">{errors.email.message}</p>}
+           </div>
+
          <div className={classes.control}>
            <label htmlFor="password">Password</label>
            <input id="password" type="password" name="password"
@@ -89,27 +195,110 @@ const navigate= useNavigate();
              }
            })}
          />
-          {errors.password && (
-                     <p className="errorMsg">{errors.password.message}</p>)}
-
+          {errors.password && (<p className="errorMsg">{errors.password.message}</p>)}
          </div>
 
-          { !isLogin && <>
-         <div className={classes.control}>
-           <label htmlFor="confirm_password">Confirm Password</label>
+          <div className={classes.control}>
+            <label htmlFor="confirm_password">Confirm Password</label>
+            <input
+              id="confirm_password"
+              type="password"
+              name="confirm_password"
+               {...register("confirm_password", { required: "confirm_password is required." })}
+            />
+            {errors.confirm_password && (<p className="errorMsg">{errors.confirm_password.message}</p>)}
+          </div>
+          <div className={classes.control}>
+             <label htmlFor="phone">Phone</label>
+             <input
+               id="phone"
+               type="text"
+               name="phone"
+                {...register("phone", { required: "Phone Number is required." })}
+             />
+             {errors.phone && (
+                  <p className="errorMsg">{errors.phone.message}</p>)}
+           </div>
+    </fieldset>
+    <fieldset>
+    <legend>Business Details</legend>
+        <div className={classes.control}>
+           <label htmlFor="bus_name">Business Name</label>
            <input
-             id="confirm_password"
-             type="password"
-             name="confirm_password"
-              {...register("confirm_password", { required: "confirm_password is required." })}
+             id="bus_name"
+             type="text"
+             name="bus_name"
+              {...register("bus_name", { required: "Please enter your Business Name" })}
            />
-           {errors.confirm_password && (
-                <p className="errorMsg">{errors.confirm_password.message}</p>)}
-         </div></>
-         }
+           {errors.bus_name && (
+                <p className="errorMsg">{errors.bus_name.message}</p>)}
+         </div>
+        <div className={classes.control}>
+           <label htmlFor="bus_type">Business Type</label>
+           <input
+             id="bus_type"
+             type="text"
+             name="bus_type"
+              {...register("bus_type", { required: "Please enter your Business Type" })}
+           />
+           {errors.bus_type && (
+                <p className="errorMsg">{errors.bus_type.message}</p>)}
+         </div>
+         <div className={classes.control}>
+            <label htmlFor="bus_category">Business Category</label>
+            <input
+              id="bus_category"
+              type="text"
+              name="bus_category"
+               {...register("bus_category", { required: "Please enter your Business category" })}
+            />
+            {errors.bus_category && (
+                 <p className="errorMsg">{errors.bus_category.message}</p>)}
+          </div>
+          <div className={classes.control}>
+              <label htmlFor="bus_subcategory">Business Sub-Category</label>
+              <input
+                id="bus_subcategory"
+                type="text"
+                name="bus_subcategory"
+                 {...register("bus_subcategory", { required: "Please enter your Business Sub-category" })}
+              />
+              {errors.bus_subcategory && (
+                   <p className="errorMsg">{errors.bus_subcategory.message}</p>)}
+            </div>
+             <div className={classes.control}>
+              <label htmlFor="pan">PAN</label>
+              <input
+                id="pan"
+                type="text"
+                name="pan"
+                 {...register("pan", { required: "Please enter your PAN" })}
+              />
+              {errors.pan && (
+                   <p className="errorMsg">{errors.pan.message}</p>)}
+            </div>
+            <div className={classes.control}>
+              <label htmlFor="gstin">GSTIN</label>
+              <input
+                id="gstin"
+                type="text"
+                name="gstin"
+                 {...register("gstin", { required: "Please enter your GSTIN" })}/>
+              {errors.pan && (
+                   <p className="errorMsg">{errors.gstin.message}</p>)}
+            </div>
 
-        { !isLogin && userRole==='admin' &&
-        <>
+            <div className={classes.control}>
+              <label htmlFor="address">Address</label>
+              <div className={classes.addressRow}>
+                    <input  type="text" id="address1" name="address1" {...register("address.0",{ required: "Enter atleast one address field." })} />
+                     <div><input type="text" id="address2" name="address2" {...register("address.1")} /></div>
+                     <div><input type="text" id="address3" name="address" {...register("address.2")} /></div>
+                     <div>  {errors.address && (<p className="errorMsg">{errors.address.message}</p>)}</div>
+            </div>
+            </div>
+    </fieldset>
+    <fieldset><legend>Bank Account Details</legend>
          <div className={classes.control}>
            <label htmlFor="account_number">Account Number</label>
            <input
@@ -123,17 +312,33 @@ const navigate= useNavigate();
          </div>
 
          <div className={classes.control}>
-            <label htmlFor="confirm_account_number">Re-enter Account Number</label>
+            <label htmlFor="acc_holder_name">Account Holder Name</label>
             <input
-              id="confirm_account_number"
+              id="acc_holder_name"
               type="text"
-              name="confirm_account_number"
-               {...register("confirm_account_number", { required: "Re-enter Account Number" })}
+              name="acc_holder_name"
+               {...register("acc_holder_name", { required: "Enter Account Holder Name" })}
             />
-            {errors.confirm_account_number && (
-                 <p className="errorMsg">{errors.confirm_account_number.message}</p>)}
+            {errors.acc_holder_name && (
+                 <p className="errorMsg">{errors.acc_holder_name.message}</p>)}
           </div>
-         </>
+
+          <div className={classes.control}>
+              <label htmlFor="ifsc_code">IFSC Code</label>
+              <input
+                id="ifsc_code"
+                type="text"
+                name="ifsc_code"
+                 {...register("ifsc_code", { required: "Enter IFSC Code" })}
+              />
+              {errors.ifsc_code && (
+                   <p className="errorMsg">{errors.ifsc_code.message}</p>)}
+            </div>
+      </fieldset>
+      </>
+      )}
+      </>
+     )
          }
 
 
@@ -143,7 +348,7 @@ const navigate= useNavigate();
          <button type="reset" onClick={resetHandler} className="button button-flat">
            Cancel
          </button>
-         <button  type="submit" className={classes.button} disabled={isSubmitting}>
+         <button  type="submit" className="button button-flat" disabled={isSubmitting}>
            {isSubmitting? 'Submitting': 'Proceed'}
          </button>
         </div>
@@ -152,9 +357,10 @@ const navigate= useNavigate();
            {isLogin ? 'Create new user' : 'Already registered? Login'}
            </Link>
        </div>
-       </>
+
      </form>
     </div>
+
    );
 
 }

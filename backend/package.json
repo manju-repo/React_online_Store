@@ -21,11 +21,11 @@
     "mongoose": "^8.1.1",
     "mongoose-unique-validator": "^5.0.0",
     "node-2fa": "^2.0.3",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.13",
-    "razorpay": "^2.9.3",
+    "razorpay": "^2.9.4",
     "twilio": "^5.1.0",
     "uuid": "^9.0.0"
   },
-  "devDependencies": {},
   "description": ""
 }

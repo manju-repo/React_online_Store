@@ -1,6 +1,7 @@
 const express = require('express');
+const checkAuth = require('../middleware/checkAuth');
 
-const {add, remove, getAdminOrders, changeOrderStatus} = require('../data/vendor');
+const {add, remove, getAdminOrders, changeOrderStatus, returnOrder} = require('../data/vendor');
 const {
   isValidText,
   isValidDate,
@@ -9,7 +10,7 @@ const {
 
 const router = express.Router();
 
-router.get('/adminOrders/:id', (req, res, next) => {
+router.get('/adminOrders/:id', checkAuth, (req, res, next) => {
  if (!req.userData) {
    return res.status(403).json({ success: false, message: 'Forbidden' });
  }
@@ -20,7 +21,7 @@ router.get('/adminOrders/:id', (req, res, next) => {
  next();
 }, getAdminOrders);
 
-router.post('/changeOrderStatus/:id', (req, res, next) => {
+router.put('/changeOrderStatus/:id', checkAuth, (req, res, next) => {
  if (!req.userData) {
    //return res.status(403).json({ success: false, message: 'Forbidden' });
    return next(error);
@@ -32,6 +33,7 @@ router.post('/changeOrderStatus/:id', (req, res, next) => {
  next();
 }, changeOrderStatus);
 
+router.put('/returnOrder', returnOrder);
 router.post('/', add);
 router.delete('/:id', remove);
 module.exports = router;

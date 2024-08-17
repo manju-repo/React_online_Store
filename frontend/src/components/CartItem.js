@@ -12,7 +12,7 @@ const CartItem = (props) => {
     const totalPriceRef=useRef();
     const dispatch = useDispatch();
     const navigate=useNavigate();
-    const {id, type, rate, image, quantity, totalPrice, category } = props.item;
+    const {id, type, rate, image, quantity, totalPrice, category, sub_category, desc, details } = props.item;
     const [changedQuantity,setChangedQuantity]=useState(quantity);
     const [changedPrice,setChangedPrice]=useState(totalPrice);
     const [stock, setStock]=useState(0);
@@ -89,6 +89,9 @@ const CartItem = (props) => {
                                              rate,
                                              image,
                                              category,
+                                             sub_category,
+                                             desc,
+                                             details,
                                              quantity:(inputQuantity.current.value)}}));
         setTimeout(() => {
             console.log("in settimeout",numberAdded);

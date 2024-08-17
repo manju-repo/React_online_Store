@@ -1,7 +1,6 @@
 const express = require('express');
 const session = require('express-session');
 const razorpay=require("razorpay");
-const checkAuth = require('./middleware/checkAuth');
 
 
 const config=require('dotenv').config({ path: "./config/config.env"});
@@ -72,7 +71,7 @@ app.use('/bestsellers',bestsellerRoutes);
 app.use('/cart',cartRoutes);
 app.use('/user',userRoutes);
 app.use('/2fa',Auth2FARoutes);
-app.use(checkAuth);
+//app.use(checkAuth);
 app.use('/orders',orderRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/vendor', vendorRoutes);

@@ -24,7 +24,22 @@ useEffect(()=>{
     setSelectedImageIndex(0);
 },[item]);
 return(
-<>
+<div style={{marginTop:'100px'}}>
+<button
+  style={{
+    marginLeft: '0px',
+    marginTop: '100px',
+    alignItems: 'left',
+    color: 'blue',
+    textDecoration: 'none',
+    border: 'none',
+    background: 'none',
+    cursor: 'pointer'
+  }}
+  onClick={() => window.history.back()}
+>
+  Back
+</button>
  <div className={classes.disp}>
                 <div className={classes.imageContainer}>
                     <div className={`${classes.mainImageContainer} ${isZoomed ? classes.zoomed : ''}`}>
@@ -53,22 +68,14 @@ return(
 
                 </div>
 
-  {/*  <div className={classes.disp}>
-        <div>
-            {item.category && item.category.toLowerCase()==='fabrics' &&
-                <div className={classes.img_container}><img style={{height:'400px',width:'400px'}} src={item.image}/></div>}
-            {item.category && item.category.toLowerCase()!=='fabrics' &&
-                <div className={classes.img_container}><img style={{height:'500px',width:'350px'}} src={item.image}/></div>}
-            <h3>{item.desc}</h3>
-        </div>
-*/}
-        {!authCtx.isAdmin && <div style={{width:'50%',height:'100%'}}><FabricItemOrder item={{id:item._id,category:item.category,sub_category:item.sub_category,type:item.type,rate:item.price,image:item.image,desc:item.desc,details:item.details,created_by:item.created_by,stock:item.stock,colour:item.colour}}/></div>}
 
-        {authCtx.isAdmin && authCtx.userId===item.created_by && <div style={{width:'50%',height:'100%'}}><FabricForm mode='edit' item={{id:item._id,category:item.category,sub_category:item.sub_category,type:item.type,rate:item.price,image:item.image,desc:item.desc,details:item.details,colour:item.colour,stock:item.stock}}/></div>}
+        {!authCtx.isAdmin && <div style={{width:'50%',height:'100%'}}><FabricItemOrder item={{id:item._id, product_code:item.product_code, category:item.category,sub_category:item.sub_category,type:item.type,rate:item.price,image:item.image,desc:item.desc,details:item.details,created_by:item.created_by,stock:item.stock,colour:item.colour}}/></div>}
+
+        {authCtx.isAdmin && authCtx.userId===item.created_by && <div style={{width:'50%',height:'100%'}}><FabricForm mode='edit' item={{id:item._id,product_code:item.product_code,category:item.category,sub_category:item.sub_category,type:item.type,rate:item.price,image:item.image,desc:item.desc,details:item.details,colour:item.colour,stock:item.stock}}/></div>}
 
     </div>
 
-</>
+</div>
 );
 }
 export default FabricItem;

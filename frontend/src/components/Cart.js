@@ -62,27 +62,31 @@ const CartPage=()=>{
         dispatch(uiActions.setCartVisibility(false));
         dispatch(uiActions.clearNotification());
         modal.current.close();
-        navigate(-1);
+        navigate('/');
      }
 
     const handleOrder=async()=>{
         dispatch(uiActions.setCartVisibility(false));
         modal.current.close();
-
+//check if user has logged in
+        if(!authCtx.isLoggedIn){
+            navigate('/user?mode=login');
+            return;
+         }
         try{
 //check stock of each item in cartItems
             let outOfStock=false;
             for(const cartItem of cartItems){
                 console.log(cartItem.id, cartItem.alloted_stock);
                 //put stock alloted to cart items back into store stock
-                const stock_response=await fetch('http://localhost:5000/store',{
+                const stock_response=await fetch('http://localhost:5000/store/stock',{
                        method:'PUT',
                        headers:{'content-type':'application/json'},
                        body:JSON.stringify({id:cartItem.id,quantity:-cartItem.alloted_stock})
                  });
 
                 //check if stock is available in store
-                const stockResp=await fetch(`http://localhost:5000/store/${cartItem.id}`);
+                const stockResp=await fetch(`http://localhost:5000/store/stock/${cartItem.id}`);
                 //console.log(cartItem.id, stockResp);
                 if(stockResp){
                     const {data}=await stockResp.json();
@@ -101,8 +105,10 @@ const CartPage=()=>{
                 return;
             const response = await fetch('http://localhost:5000/orders',{
                             method:'POST',
-                            headers:{'content-type':'application/json'},
-                            body:JSON.stringify({items:cartItems,totalQuantity:cartTotalItems,totalAmount:cartAmount})
+                            headers:{
+                                'Authorization': `Bearer ${authCtx.token}`,
+                                'content-type':'application/json'},
+                            body:JSON.stringify({items:cartItems,totalQuantity:cartTotalItems,totalAmount:cartAmount,client_id:authCtx.userId})
             });
             const {orderId} = await response.json();
             console.log(orderId);
@@ -141,7 +147,7 @@ const CartPage=()=>{
                         rate:item.rate,
                         image:item.image,
                         quantity:item.quantity,
-                        totalPrice:item.totalPrice,
+                        amount:item.amount,
                         category:item.category
                         }}
                 />

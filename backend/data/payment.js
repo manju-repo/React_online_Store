@@ -4,14 +4,33 @@ const Razorpay = require('razorpay');
 
 const createRazorpayAccount = async (userData) => {
   try {
-    const response = await axios.post('https://api.razorpay.com/v1/accounts', userData, {
+    let contactData;
+    contactData.name=userData.first_name+" "+ userData.last_name;
+    contactData.email=userData.email;
+    contactData.contact=userData.phone;
+    contactData.type="vendor";
+    contactData.reference_id="J'adore "+ userData.phone;
+
+    const response = await axios.post(' https://api.razorpay.com/v1/contacts', contactData, {
       auth: {
         username: process.env.RAZORPAY_API_KEY,
         password: process.env.RAZORPAY_API_SECRET,
       },
     });
-    return response.data;
-  } catch (error) {
+    const contact_id= response.data.id;
+    let bankData;
+    bankData.contact_id=contact_id;
+    bankData.account_type="bank_account";
+    bankData.bank_account={name:contactData.name ,ifsc:userData.ifsc_code ,account_number:userData.account_number};
+
+     response = await axios.post('https://api.razorpay.com/v1/fund_accounts', bankData, {
+     auth: {
+        username: process.env.RAZORPAY_API_KEY,
+        password: process.env.RAZORPAY_API_SECRET,
+      },
+    });
+    }
+   catch (error) {
     console.error('Error creating Razorpay account:', error.response ? error.response.data : error.message);
     throw error;
   }
@@ -24,12 +43,13 @@ const createRazorpayAccount = async (userData) => {
         currency: "INR",
     };
     try{
+    console.log(amount);
     const created_order = await instance.orders.create(options);
-    //console.log("in Checkout ",created_order);
+    console.log("in Checkout ",created_order);
     res.status(200).json({success: true,created_order});
     }
     catch(error){
-        //console.log(error);
+        console.log("in checkout ",error);
     }
 };
 
@@ -102,7 +122,6 @@ const createRazorpayAccount = async (userData) => {
 };
 
 const paymentRefund = async (req, res) => {
- console.log("in pr");
    try{
     const razorpay = new Razorpay({
         key_id:  process.env.RAZORPAY_API_KEY,
@@ -110,6 +129,7 @@ const paymentRefund = async (req, res) => {
          });
 
         let {paymentId,amount} = req.body;
+        console.log("in PR ", paymentId, amount);
         amount*=100;
       // RazorpayClient razorpay = new RazorpayClient("[YOUR_KEY_ID]", "[YOUR_KEY_SECRET]");
 
