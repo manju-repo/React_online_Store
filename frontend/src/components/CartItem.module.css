@@ -1,3 +1,6 @@
+*{
+color:grey;
+}
 .item {
   margin: 1rem 0;
   padding: 1rem;
@@ -35,24 +38,18 @@
 }
 
 .quantity span {
-  font-size: 1.5rem;
-  font-weight: bold;
+ color:grey;
 }
 
 .price {
-  font-size: 1.5rem;
-  font-weight: bold;
+  color:grey;
 }
 
 .itemprice {
-  font-weight: normal;
-  font-size: 1rem;
-  font-style: italic;
+   color:grey;
 }
 .itemstock {
-  font-weight: normal;
-  font-size: 1rem;
-  font-style: italic;
+ color:grey;
 }
 
 input {
@@ -80,7 +77,5 @@ input {
 }
 
 .itemtype{
-    font-weight:bold;
-    font-family:"Comic Sans MS", cursive;
-    font-size:20px;
+    color:grey;
 }

@@ -43,7 +43,7 @@ const navigate= useNavigate();
 <div className={`${classes.container} ${!isLogin && userRole === 'admin' ? classes.container1 : ''}`}>
      <form onSubmit={handleSubmit(submitHandler)} className={classes.form}>
 
-        <h3 style={{align:'center'}}>{isLogin ? 'Sign in' : ''}</h3>
+        <h3 style={{textAlign:'center',color:'#850e57'}}>{isLogin ? 'Sign in' : ''}</h3>
         {isLogin?(
         <>
                <div className={classes.control}>
@@ -76,7 +76,7 @@ const navigate= useNavigate();
             </>
             ):(
 <>
-        <h3>Sign up as <a href="#" onClick={(event)=>handleRole('client',event)}>Customer</a> or <a href="#" onClick={(event)=>handleRole('admin',event)}>Seller</a></h3>
+        <h3 style={{color:'#850e57'}}>Sign up as <a style={{color:'#850e57'}} href="#" onClick={(event)=>handleRole('client',event)}>Customer</a> or <a style={{color:'#850e57'}} href="#" onClick={(event)=>handleRole('admin',event)}>Seller</a></h3>
          {(userRole==='client')?(
             <>
          <div className={classes.control}>
@@ -144,18 +144,18 @@ const navigate= useNavigate();
           </div>
 
           <div className={classes.control}>
-            <label htmlFor="address">Address</label>
-            <div className={classes.addressRow}>
+            <label style={{minWidth:'240px'}} htmlFor="address">Address</label>
+            <div style={{textAlign:'left'}}>
                   <input  type="text" id="address1" name="address1" {...register("address.0",{ required: "Enter atleast one address field." })} />
-                   <div><input type="text" id="address2" name="address2" {...register("address.1")} /></div>
-                   <div><input type="text" id="address3" name="address" {...register("address.2")} /></div>
+                   <input type="text" id="address2" name="address2" {...register("address.1")} />
+                   <input type="text" id="address3" name="address" {...register("address.2")} />
                    <div>  {errors.address && (<p className="errorMsg">{errors.address.message}</p>)}</div>
           </div>
           </div>
           </>
          ):(
          <>
-         <fieldset><legend>Personal Details</legend>
+         <fieldset><legend style={{color:'#850e57'}} >Personal Details</legend>
          <div className={classes.control}>
             <label htmlFor="first_name">First Name</label>
             <input type="text" id="first_name" name="first_name"
@@ -219,9 +219,14 @@ const navigate= useNavigate();
              {errors.phone && (
                   <p className="errorMsg">{errors.phone.message}</p>)}
            </div>
+           <div className={classes.control}>
+                <label htmlFor="profileImage">Profile Image</label>
+                <input id="profileImage" type="text" name="profileImage" {...register("profileImage")}/>
+
+              </div>
     </fieldset>
     <fieldset>
-    <legend>Business Details</legend>
+    <legend style={{color:'#850e57'}} >Business Details</legend>
         <div className={classes.control}>
            <label htmlFor="bus_name">Business Name</label>
            <input
@@ -289,16 +294,16 @@ const navigate= useNavigate();
             </div>
 
             <div className={classes.control}>
-              <label htmlFor="address">Address</label>
-              <div className={classes.addressRow}>
-                    <input  type="text" id="address1" name="address1" {...register("address.0",{ required: "Enter atleast one address field." })} />
-                     <div><input type="text" id="address2" name="address2" {...register("address.1")} /></div>
-                     <div><input type="text" id="address3" name="address" {...register("address.2")} /></div>
-                     <div>  {errors.address && (<p className="errorMsg">{errors.address.message}</p>)}</div>
-            </div>
-            </div>
+            <label style={{minWidth:'240px'}} htmlFor="address">Address</label>
+            <div style={{textAlign:'left'}}>
+                  <input  type="text" id="address1" name="address1" {...register("address.0",{ required: "Enter atleast one address field." })} />
+                   <input type="text" id="address2" name="address2" {...register("address.1")} />
+                   <input type="text" id="address3" name="address" {...register("address.2")} />
+                   <div>  {errors.address && (<p className="errorMsg">{errors.address.message}</p>)}</div>
+          </div>
+          </div>
     </fieldset>
-    <fieldset><legend>Bank Account Details</legend>
+    <fieldset><legend style={{color:'#850e57'}} >Bank Account Details</legend>
          <div className={classes.control}>
            <label htmlFor="account_number">Account Number</label>
            <input
@@ -344,18 +349,18 @@ const navigate= useNavigate();
 
 
 
-       <div className={classes.actions}>
-         <button type="reset" onClick={resetHandler} className="button button-flat">
+       <div style={{marginTop:'20px'}}>
+         <button className={classes.button} type="reset" onClick={resetHandler}>
            Cancel
          </button>
-         <button  type="submit" className="button button-flat" disabled={isSubmitting}>
+         <button className={classes.button} type="submit" >
            {isSubmitting? 'Submitting': 'Proceed'}
          </button>
         </div>
-       <div className={classes.actions} >
-       <Link to={`?mode=${isLogin ? 'signup' : 'login'}`} >
+       <div style={{marginTop:'20px'}}>
+       <Link style={{color:'#850e57',textDecoration:'none'}} to={`?mode=${isLogin ? 'signup' : 'login'}`} >
            {isLogin ? 'Create new user' : 'Already registered? Login'}
-           </Link>
+       </Link>
        </div>
 
      </form>

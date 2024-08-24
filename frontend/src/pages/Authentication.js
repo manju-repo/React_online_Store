@@ -88,6 +88,9 @@ let order='';
       },
       body: JSON.stringify(authData)
      });
+
+
+
   console.log(response);
 
 
@@ -158,7 +161,7 @@ let order='';
                 const user_orders=orders.data;
                 console.log(user_orders);
 
-           if(user_cart && JSON.parse(localStorage.getItem('cartId'))){
+           if(authCtx.isAdmin && user_cart && JSON.parse(localStorage.getItem('cartId'))){
             if(user_cart != JSON.parse(localStorage.getItem('cartId'))){
               let concan=window.confirm("Do you want to replace your previous cart with the new one?");
               if(concan){

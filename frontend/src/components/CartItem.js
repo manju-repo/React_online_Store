@@ -12,9 +12,9 @@ const CartItem = (props) => {
     const totalPriceRef=useRef();
     const dispatch = useDispatch();
     const navigate=useNavigate();
-    const {id, type, rate, image, quantity, totalPrice, category, sub_category, desc, details } = props.item;
+    const {id, type, rate, image, quantity, amount, category, sub_category, desc, details,size } = props.item;
     const [changedQuantity,setChangedQuantity]=useState(quantity);
-    const [changedPrice,setChangedPrice]=useState(totalPrice);
+    const [changedPrice,setChangedPrice]=useState(amount);
     const [stock, setStock]=useState(0);
     const [stockUpdateMsg,setStockUpdateMsg]=useState("");
 
@@ -40,13 +40,13 @@ const CartItem = (props) => {
         }
         checkAvailability();
         setChangedQuantity(quantity);
-        setChangedPrice(totalPrice);
+        setChangedPrice(amount);
         inputQuantity.current.value=changedQuantity;
         totalPriceRef.current.value=changedPrice;
     },[changedQuantity,stock]);
 
    const updateStock=async(id, quantity)=>{
-   const stock_response=await fetch('http://localhost:5000/store',{
+   const stock_response=await fetch('http://localhost:5000/store/stock',{
                        method:'PUT',
                        headers:{'content-type':'application/json'},
                        body:JSON.stringify({id:id,quantity:quantity})
@@ -58,7 +58,7 @@ const CartItem = (props) => {
    }
 
   const changeQuantity=(e)=>{
-        console.log(stock);
+
       if(stock < Number(inputQuantity.current.value)){
           if(stock===0)
             setStockUpdateMsg(`Out of stock`);
@@ -81,7 +81,6 @@ const CartItem = (props) => {
         setChangedQuantity(inputQuantity.current.value)
         e.value=inputQuantity.current.value;
         setChangedPrice(inputQuantity.current.value*rate);
-        alert(numberAdded);
         updateStock(id,numberAdded);
         dispatch(cartActions.addToCart({item:{
                                              id,
@@ -92,12 +91,14 @@ const CartItem = (props) => {
                                              sub_category,
                                              desc,
                                              details,
+                                             size,
                                              quantity:(inputQuantity.current.value)}}));
+
         setTimeout(() => {
             console.log("in settimeout",numberAdded);
-            if (!status || (status && Array.isArray(item) && item.find(itm=>itm.id===id))) {      //check if not present in order items and present in cart items
+            if (!status || (status && Array.isArray(item) && item.find(itm=>(itm.id===id && itm.size:size)))) {      //check if not present in order items and present in cart items
               updateStock(id, -numberAdded);
-              dispatch(cartActions.releaseStock({id:id}));   //release stock alloted in cart after 15 mins
+              dispatch(cartActions.releaseStock({id:id,size:size}));   //release stock alloted in cart after 15 mins
             }
           }, 5000);
       }
@@ -105,11 +106,24 @@ const CartItem = (props) => {
   const removeEntryHandler = () => {
        if(stock===0)            //user removes item because it is not available
             inputQuantity.current.value=0;
-      else{
-        inputQuantity.current.value=inputQuantity.current.value-1;
-        updateStock(id,-1);
+       else{
+            //alert(`qty: ${inputQuantity.current.value}`);
+            if(category.toLowerCase()==='fabrics' && inputQuantity.current.value-1 < 1) {                 //if inputQuantity.current.value is between 0-1 in case of fabrics
+                const confirmMsg=window.confirm('Do you want to remove this item from cart?');
+                if(confirmMsg){
+                    inputQuantity.current.value=0;
+                    updateStock(id,-inputQuantity.current.value);
+                }
+                else
+                    return;
+            }
+            else{
+                inputQuantity.current.value=inputQuantity.current.value-1;
+                updateStock(id,-1);
+            }
       }
-      dispatch(cartActions.removeFromCart({item:{id,quantity:(inputQuantity.current.value)}}));
+      //alert(inputQuantity.current.value);
+      dispatch(cartActions.removeFromCart({item:{id,size,quantity:(inputQuantity.current.value)}}));
    }
 
 
@@ -122,9 +136,10 @@ const CartItem = (props) => {
             </NavLink>
             </div>
             <div>
-                 <span className={classes.itemtype}>{type}</span>
-                 {category.toLowerCase()==='fabrics' &&  <div className={classes.itemprice}>(Rs.{rate}/meter)</div>}
-                 {category.toLowerCase()!=='fabrics' &&  <div className={classes.itemprice}>(Rs.{rate})</div>}
+                 <span className={classes.itemtype}>{desc}</span>
+                 {size && <div style={{width:'200px',color:'grey',fontSize:'10px'}}>Size {size}</div>}
+                 {category.toLowerCase()==='fabrics' &&  <div className={classes.itemprice}>Rs.{rate}/meter</div>}
+                 {category.toLowerCase()!=='fabrics' &&  <div className={classes.itemprice}>Rs.{rate}</div>}
             </div>
 
             <div className={classes.quantity}>
@@ -132,7 +147,7 @@ const CartItem = (props) => {
                 {category.toLowerCase()==='fabrics' && <span style={{fontWeight:'normal',fontSize:'1rem',fontStyle:'italic'}}>meters</span>}
             </div>
             <div ref ={totalPriceRef} id="tot" className={classes.itemprice}>
-                  Rs.{totalPrice}
+                  Rs.{amount}
             </div>
             <div><i className="fa-regular fa-trash-can" onClick={removeEntryHandler}></i></div>
             {stockUpdateMsg && <div className={classes.itemstock}>{stockUpdateMsg}</div>}

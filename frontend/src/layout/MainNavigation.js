@@ -1,4 +1,5 @@
 import {useEffect, useState, useContext} from 'react';
+import {useDispatch,useSelector} from 'react-redux';
 import { AuthContext } from '../Context/auth-context';
 import { OrderContext } from '../Context/order-context';
 import Drawer from '../components/Drawer';
@@ -14,13 +15,14 @@ function MainNavigation() {
     const authCtx=useContext(AuthContext);
     const {wishlist}=useContext(WishlistContext);
     const {orders}= useContext(OrderContext);
+    const cartQuantity=useSelector((state)=>state.cart.totalQuantity);
     const inputRef = useRef();
     const navigate=useNavigate();
     const [isDrawerOpen, setDrawerOpen] = useState(false);
 
     useEffect(()=>{
     //console.log(wishlist,orders);
-    },[authCtx.isLoggedIn, wishlist, orders]);
+    },[authCtx.isLoggedIn, wishlist, orders, cartQuantity]);
 
     const toggleDrawer = () => {
     setDrawerOpen((prevState) => !prevState);

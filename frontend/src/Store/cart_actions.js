@@ -106,8 +106,6 @@ export const sendCartData=(cart)=>{
                         `http://localhost:5000/cart/${cart_id}`,
                         { method:'DELETE'}
                       );
-
-
                       localStorage.removeItem('cartId');
                 }
                 else{
@@ -128,7 +126,7 @@ export const sendCartData=(cart)=>{
             }
             else
             {
-        // Cart does not exist for this user so creating it with POST request
+        // Cart does not exist for this user
 console.log("no cart yet");
             const response=await fetch(
                 'http://localhost:5000/cart',

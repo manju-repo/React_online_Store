@@ -3,6 +3,7 @@ display:flex;
 height:100%;
 width:100%;
 align-items: top; /* Align items vertically */
+margin-right:'0px';
 }
 .disp > div  {
 height:100%;
@@ -57,12 +58,16 @@ top: 50%;
 
 .imageContainer {
 width:50%;
+margin-right:0px;
+cell-padding:0px;
 }
 
 .imageIcons {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: left;
+  align-items: left;
+  margin-left:20px;
 }
 
 .icon {

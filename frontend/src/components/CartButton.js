@@ -13,6 +13,8 @@ const CartButton=()=>{
       const modal=useRef();
       const navigate=useNavigate();
 
+        useEffect(()=>{
+        },[cartQuantity]);
 
       const toggleCartHandler=()=>{
          dispatch(uiActions.setCartVisibility(true));

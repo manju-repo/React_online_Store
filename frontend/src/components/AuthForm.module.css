@@ -3,9 +3,10 @@
   justify-content: left; /* horizontally center */
   align-items: center; /* vertically center */
   height: 70vh; /* adjust the height as needed */
-  width:70rem;
-  margin: 50px auto 20px; /* Adjust the top margin to be greater than the height of the main menu */
+  width:100%;
+  margin: 100px auto 20px; /* Adjust the top margin to be greater than the height of the main menu */
   color:black;
+  text-align:center;
 }
 
 .container1 {
@@ -13,14 +14,15 @@
   justify-content: left; /* horizontally center */
   align-items: center; /* vertically center */
   height: 70vh; /* adjust the height as needed */
-  width:70rem;
+  width:100%;
   margin: 300px auto 20px; /* Adjust the top margin to be greater than the height of the main menu */
   color:black;
+text-align:center;
 }
 
 .form {
   max-width: 100%;
-  margin: 2rem auto ;
+  margin: 0 auto ;
   align:center;
   color:black;
 }
@@ -38,7 +40,7 @@
 .form label{
     text-align:left;
     width:15rem;
-    color:black;
+    color:#850e57;
 }
 
 .addressRow{
@@ -53,7 +55,10 @@
   margin-top: 0.25rem;
   width:25rem;
   background-color: white;
-  color: black;}
+  color: black;
+  height:30px;
+  width:500px;
+  }
 
 .actions {
   display: flex;
@@ -63,33 +68,22 @@
   margin-top: 1rem;
 }
 
-.actions button {
-  font: inherit;
-  font-size:1rem;
-  cursor: pointer;
-  padding: 0.3rem 1.5rem;
-  border-radius: 4px;
-  background-color: var(--color-gray-500);
-  color: white;
-  border: 2px solid var(--color-gray-500);
-  width:100px;
-  height:40px;
+.button {
+    height:30px;
+    width:80px;
+  background-color: e878bd; /* grey background */
+  color: #850e57; /* White text */
+  font-size: 16px; /* Font size */
+  border: 2px solid grey; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Cursor style */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
 }
 
-.actions a {
-  text-decoration: none;
-  background-color: transparent;
-  color: black;
-  cursor:pointer;
+.button:hover {
+  background-color: #850e57; /* Darker green background on hover */
+  color:white;
 }
 
-.actions button:hover {
-  background-color: white;
-  color:black;
-}
 
-.actions a:hover {
-  color: var(--color-gray-500);
-      cursor:pointer;
 
-}

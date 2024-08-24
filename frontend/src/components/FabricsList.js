@@ -99,7 +99,7 @@ return()=>{
     {list.length===0 && <h2>We are currently Out of Stock</h2>}
 </div>
 {authCtx.isLoggedIn && authCtx.isAdmin &&
-        <div><button  className={classes.button} onClick={addFabricHandler}>Add Item</button></div>
+        <div style={{textAlign:'left',marginBottom:'20px'}}><button  className={classes.button} onClick={addFabricHandler}>Add Product</button></div>
 }
 <ul className={classes.gallery}>
   { list.map((item) => (<>

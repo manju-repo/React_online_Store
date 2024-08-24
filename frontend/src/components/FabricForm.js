@@ -9,18 +9,9 @@ import {category} from './category';
 const FabricForm=(props)=>{
 let {mode,item}=props;
 const {itemCategory}=useParams();
-console.log(itemCategory);
+
 if (mode!=='edit') mode='add';
 
-//const {item}=props;
-/*const category = [
-  { value: "Fabrics", label: "Fabrics" },
-  { value: "Sarees", label: "Sarees" },
-  { value: "Lehengas", label: "Lehengas" },
-  { value: "Salwar Suits", label: "Salwar Suits" },
-  { value: "Dupattas", label: "Dupattas" },
-  { value: "Shrugs", label: "Shrugs" }
-];*/
 
 const [CategoryIndex,setCategoryIndex]=useState(0);
 
@@ -72,15 +63,21 @@ const authCtx=useContext(AuthContext);
       const price=data.price;
       const details=data.details;
       const colour=data.colour;
-      const stock=data.stock;
-      console.log("data: ",data);
+      const size={XS:Number(data.sizeXS),S:Number(data.sizeS),M:Number(data.sizeM),L:Number(data.sizeL),XL:Number(data.sizeXL),XXL:Number(data.sizeXXL)};
+      const stock= Number(data.sizeXS)+Number(data.sizeS)+Number(data.sizeM)+Number(data.sizeL)+Number(data.sizeXL)+Number(data.sizeXXL);
+      /*const stock = size.reduce((total, item) => {
+                     return total + Number(item);
+                  }, 0);*/
+      //const colour_options=data.colour_options;
+
+      //console.log(item.size.XS);
 
       try{
         const response = await fetch(`http://localhost:5000/fabrics/${item.id}`,{
                         method:'PUT',
                         headers:{'content-type':'application/json',Authorization:'Bearer '+ authCtx.token},
                         body:JSON.stringify({product_code:product_code, category:category, sub_category:sub_category, type:type, image:imageurl, desc:desc,
-                                price:price, colour:colour, stock:stock, details:details})
+                                price:price, colour:colour, size:size, stock:stock, details:details,created_by:authCtx.userId})
                         });
         console.log(response);
         const respdata=await response.json();
@@ -102,7 +99,11 @@ const authCtx=useContext(AuthContext);
       const price=data.price;
       const details=data.details;
       const colour=data.colour;
-      const stock=data.stock;
+      const size=data.size;
+      const stock = size.reduce((total, item) => {
+                           return total + Number(item);
+                        }, 0);
+      //const colour_options=data.colour_options;
       console.log(data);
 
       try{
@@ -110,7 +111,7 @@ const authCtx=useContext(AuthContext);
                         method:'POST',
                         headers:{'content-type':'application/json',Authorization:'Bearer '+ authCtx.token},
                         body:JSON.stringify({product_code:product_code, category:category, sub_category:sub_category, type:type, image:imageurl, desc:desc, price:price,
-                                            details:details, colour:colour, stock:stock, created_by:authCtx.userId})
+                                            details:details, colour:colour, size:size, stock:stock, created_by:authCtx.userId})
                         });
         console.log(response);
         const respdata=await response.json();
@@ -133,7 +134,7 @@ const authCtx=useContext(AuthContext);
 
          <tr>
                <td><label htmlFor="product_code">Product Code</label></td>
-               <td><input type="text" id="product_code" name="product_code" defaultValue={mode==='edit' ? item.product_code:''}
+               <td  style={{width:'200px'}}><input type="text" id="product_code" name="product_code" defaultValue={mode==='edit' ? item.product_code:''}
                  {...register("product_code", { required: "product_code is required." })}  /></td></tr>
             { errors.product_code && <tr><td></td><td colspan="2"><p className={classes.errorMsg}>{errors.product_code.message}</p></td></tr>}
          <tr>
@@ -149,15 +150,15 @@ const authCtx=useContext(AuthContext);
                   control: (provided) => ({
                            ...provided,
                            minWidth: '200px', // Minimum width
-                           maxWidth: '300px', // Maximum width
+                           maxWidth: '200px', // Maximum width
                          }),
 
                      option: (provided) => ({
                        ...provided,
                        color: '#96075a',// Change text color for all options
-                        maxHeight:'20px',
-                        height:'20px',
-                     }),}}/>
+                        maxHeight:'50px',
+                        height:'50px',
+                    }),}}/>
                )}
              /></td></tr>
   {errors.category && <tr><td></td><td colspan="2"><p className={classes.errorMsg}>{errors.category.message}</p></td></tr>}
@@ -179,7 +180,7 @@ const authCtx=useContext(AuthContext);
         <tr>
            <td><label htmlFor="imageurl">Image URL</label></td>
            <td style={{display:'flex', flexDirection:'column'}}>
-             <input  type="text" id="imageurl" name="imageurl1" placeholder="https://i.pinimg.com/236x/89/b7/12/89b712e5ce8fe976593736e5a59b3d4b.jpg"
+             <input  type="text" id="imageurl1" name="imageurl1" placeholder="https://i.pinimg.com/236x/89/b7/12/89b712e5ce8fe976593736e5a59b3d4b.jpg"
              {...register("imageurl.0",{ required: "Enter URL of the image to be displayed" })} />
              <input  type="text" id="imageurl2" name="imageurl2" defaultValue={null} {...register("imageurl.1")} />
              <input  type="text" id="imageurl3" name="imageurl3" defaultValue={null} {...register("imageurl.2")} />
@@ -206,6 +207,8 @@ const authCtx=useContext(AuthContext);
                   required: "Description is required."})}/></td></tr>
             { errors.desc && <tr><td></td><td colspan="2"><p className={classes.errorMsg}>{errors.desc.message}</p></td></tr>}
 
+         <tr><td></td><td colspan="2" className={classes.help_text}>Description text will be displayed below your product image</td></tr>
+
             <tr><td><label htmlFor="colour">Colour</label></td>
            <td style={{textAlign:'left'}}><input style={{width:'120px'}} id="colour" type="text" name="colour" defaultValue={mode==='edit' ? item.colour:''} placeholder="White"
             {...register("colour", {
@@ -231,7 +234,7 @@ const authCtx=useContext(AuthContext);
                }})}/><span>Rs</span></td></tr>
          {mode!=='edit' && errors.price && <tr><td></td><td colspan="2"><p className={classes.errorMsg}>{errors.price.message}</p></td></tr>}
 
-        <tr><td><label htmlFor="stock">Stock</label></td>
+    {/*    <tr><td><label htmlFor="stock">Stock</label></td>
            <td style={{textAlign:'left'}}><input style={{width:'120px'}} id="stock" type="text" name="stock" defaultValue={mode==='edit' ? item.stock:''} placeholder="ex.50"
            onKeyPress={(e) => {
                  // Allow only digits, period, and backspace
@@ -248,7 +251,7 @@ const authCtx=useContext(AuthContext);
                  message: "Please enter valid stock."
                }})}/></td></tr>
          {mode!=='edit' && errors.stock && <tr><td></td><td colspan="2"><p className={classes.errorMsg}>{errors.stock.message}</p></td></tr>}
-
+*/}
          <tr>
            <td><label htmlFor="details">Details</label></td>
            <td>
@@ -270,11 +273,62 @@ const authCtx=useContext(AuthContext);
              </td>
            </tr>
          )}
+         <tr>
+            <td><label htmlFor="sizes">Size</label></td>
+            <td style={{display:'flex',fontSize:'10px'}}>
+            <span style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}}>XS</span>
+            <span style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}}>S</span>
+            <span style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}}>M</span>
+            <span style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}}>L</span>
+            <span style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}}>XL</span>
+            <span style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}}>XXL</span></td>
+         </tr>
+         <tr style={{height:'40px'}}>
+            <td className={classes.help_text}>Enter stock for each size</td>
+            <td style={{display:'flex',justifyContent:'top'}}>
+              <input style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}} type="text" id="sizeXS" name="sizeXS" defaultValue={mode==='edit' ? item.size?.XS||'':''} {...register("sizeXS")}/>
+              <input style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}} type="text" id="sizeS" name="sizeS" defaultValue={mode==='edit' ? item.size?.S||'':''} {...register("sizeS")} />
+              <input style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}} type="text" id="sizeM" name="sizeM" defaultValue={mode==='edit' ? item.size?.M||'':''} {...register("sizeM")} />
+              <input style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}} type="text" id="sizeL" name="sizeL" defaultValue={mode==='edit' ? item.size?.L||'':''} {...register("sizeL")} />
+              <input style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}} type="text" id="sizeXL" name="sizeXL" defaultValue={mode==='edit' ? item.size?.XL||'':''} {...register("sizeXL")} />
+              <input style={{height:'30px',width:'30px',minWidth:'30px',justifyContent:'top'}} type="text" id="sizeXXL" name="sizeXXL" defaultValue={mode==='edit' ? item.size?.XXL||'':''} {...register("sizeXXL")} />
+            </td>
+         </tr>
+{/*
+            <td style={{display:'flex', flexDirection:'column'}}>
+              <label  type="text" id="col_opt1" name="col_opt1" placeholder="white" {...register("col_opt.0")}/>
+              <input  type="text" id="col_opt2" name="col_opt2" defaultValue={null} {...register("col_opt.1")} />
+              <input  type="text" id="col_opt3" name="col_opt3" defaultValue={null} {...register("col_opt.2")} />
+              <input  type="text" id="col_opt4" name="col_opt4" defaultValue={null} {...register("col_opt.3")} />
+              <input  type="text" id="col_opt5" name="col_opt5" defaultValue={null} {...register("col_opt.4")} />
+            </td>
+         </tr>
+         <tr><td></td><td colspan="2" className={classes.help_text}>Please make sure to add products with the code format 'product-code-colour' for all the colour options given above to display the colour options for your product.</td></tr>
+          <tr><td></td><td style={{textAlign:'center',width:'600px'}}>URL of image</td><td style={{textAlign:'center',width:'150px'}}>Colour</td>
+         </tr>
+         <tr><td style={{width:'186.35px', minWidth:'186.35px'}}></td>
 
+            <td style={{display:'flex', flexDirection:'column'}}>
+              <input  type="text" id="col_opt_url1" name="col_opt_url1" placeholder="https://i.pinimg.com/236x/89/b7/12/89b712e5ce8fe976593736e5a59b3d4b.jpg" {...register("col_opt_url.0")}/>
+              <input  type="text" id="col_opt_url2" name="col_opt_url2" defaultValue={null} {...register("col_opt_url.1")} />
+              <input  type="text" id="col_opt_url3" name="col_opt_url3" defaultValue={null} {...register("col_opt_url.2")} />
+              <input  type="text" id="col_opt_url4" name="col_opt_url4" defaultValue={null} {...register("col_opt_url.3")} />
+              <input  type="text" id="col_opt_url5" name="col_opt_url5" defaultValue={null} {...register("col_opt_url.4")} />
+            </td>
+
+            <td style={{display:'flex', flexDirection:'column'}}>
+              <input  type="text" id="col_opt1" name="col_opt1" placeholder="white" {...register("col_opt.0")}/>
+              <input  type="text" id="col_opt2" name="col_opt2" defaultValue={null} {...register("col_opt.1")} />
+              <input  type="text" id="col_opt3" name="col_opt3" defaultValue={null} {...register("col_opt.2")} />
+              <input  type="text" id="col_opt4" name="col_opt4" defaultValue={null} {...register("col_opt.3")} />
+              <input  type="text" id="col_opt5" name="col_opt5" defaultValue={null} {...register("col_opt.4")} />
+            </td>
+         </tr>
+*/}
     </tbody>
     </table>
-        <div>
-         <button className={classes.button} type="reset" onClick={resetHandler} >
+        <div style={{marginTop:'40px',marginBottom:'40px'}}>
+         <button  className={classes.button} type="reset" onClick={resetHandler} >
            Cancel
          </button>
          <button  className={classes.button} type="submit"  onClick={handleSubmit(submitHandler)}  disabled={isSubmitting}>

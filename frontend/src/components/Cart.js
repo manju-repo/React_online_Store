@@ -62,7 +62,7 @@ const CartPage=()=>{
         dispatch(uiActions.setCartVisibility(false));
         dispatch(uiActions.clearNotification());
         modal.current.close();
-        navigate('/');
+        navigate(-1);
      }
 
     const handleOrder=async()=>{
@@ -148,7 +148,9 @@ const CartPage=()=>{
                         image:item.image,
                         quantity:item.quantity,
                         amount:item.amount,
-                        category:item.category
+                        category:item.category,
+                        desc:item.desc,
+                        size:item.size
                         }}
                 />
             ))}
@@ -163,10 +165,12 @@ const CartPage=()=>{
         </div>
         </Modal>
     { !cartTotalItems &&
-         (<div className={classes.shop} >
+         (<>
+          <div style={{marginTop:'50px',fontSize:'20px'}}><b>Your cart is empty!</b></div>
+         <div className={classes.shop} >
          <button style={{borderRadius:'20px',color:'black'}} onClick={handleReset}>Start Shopping</button>
          <img style={{height:'100px',width:'100px',borderRadius:'20px'}} src="https://i.pinimg.com/236x/f9/31/39/f931398e98f3566c894b675a1b51c602.jpg"/>
-         </div>)
+         </div></>)
     }
 </>
 );

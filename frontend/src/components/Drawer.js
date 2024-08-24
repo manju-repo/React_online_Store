@@ -13,7 +13,7 @@ const Drawer = ({ isOpen, onClose }) => {
                    <NavLink to="/profile" activeClassName={classes.active}>Profile</NavLink>
                  </li>
                  <li>
-                   <NavLink to="/settings" activeClassName={classes.active}>Add Items</NavLink>
+                   <NavLink to="/fabrics/new/fabrics" activeClassName={classes.active}>Add Items</NavLink>
                  </li>
                  <li>
                    <NavLink to="/support" activeClassName={classes.active}>Support</NavLink>

@@ -8,7 +8,7 @@ const StoreSchema = new mongoose.Schema({
     type: String,
     image:[String],
     colour:String,
-    colour_options:[Object],
+    size:Object,
     desc:String,
     details:[String],
     created_by:Object,

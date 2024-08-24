@@ -3,10 +3,31 @@ const store=require("../models/store");
 
 
 const updateStock=async(req,res,next)=>{
-    const {id,quantity} = req.body;
-    console.log("update stock ",id,quantity);
+    const {id,quantity,size} = req.body;
+    console.log("update stock ",id,quantity,size, [`size.${size}`]);
+    try{
+        await store.updateOne(
+            { _id: id },
+            {
+                $set: {
+                    'size.XS': { $toInt: '$size.XS' },
+                    'size.S': { $toInt: '$size.S' },
+                    'size.M': { $toInt: '$size.M' },
+                    'size.L': { $toInt: '$size.L' },
+                    'size.XL': { $toInt: '$size.XL' },
+                    'size.XXL': { $toInt: '$size.XXL' }
+                }
+            }
+        );
+    }
+    catch(error){
+    console.log(error);
+    }
+
          try{
-            const updatedStock=await store.findByIdAndUpdate({_id:id, stock: { $gt: 0 }},{ $inc:{stock:-quantity}},
+            const updatedStock=await store.findByIdAndUpdate(
+                        {_id:id, stock: { $gt: 0 }},
+                        { $inc:{stock:-quantity,[`size.${size}`]: -quantity }},
                         { new: true, useFindAndModify: false });
             console.log("stocks updated", updatedStock);
             res.json({success:true,message:'Stock updated', data:updatedStock});
@@ -63,8 +84,24 @@ const getProductDetails=async(req,res,next)=>{
        }
 }
 
+const getSimilarProducts=async(req,res,next)=>{
+   const {product_code}=req.params;
+       console.log(product_code);
+     try{
+            const products = await store.find({ product_code: { $regex: `^${product_code}` } });
+           //console.log("prod details:", details);
+           if(!products)
+               res.json({success:false, data:null});
+           else
+               res.json({success:true, data:products});
+       }catch(error){
+           console.log(error.message);
+       }
+}
+
 
 exports.updateStock=updateStock;
 exports.checkStock=checkStock;
 exports.getProductDetails=getProductDetails;
 exports.getProducts=getProducts;
+exports.getSimilarProducts=getSimilarProducts;

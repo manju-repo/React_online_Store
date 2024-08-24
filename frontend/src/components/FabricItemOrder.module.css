@@ -58,3 +58,57 @@ input{
     margin-top:20px;
     color:black;
 }
+
+
+.sizeContainer {
+    position: relative; /* To position the cross over the size box */
+    display: inline-block; /* Allows the container to fit the content */
+}
+
+.sizeBox {
+    height: 30px; /* Adjust height */
+    width: 40px; /* Adjust width */
+    max-width:40px;
+    font-size: 10px; /* Adjust font size */
+    text-align: center; /* Center text */
+    cursor:pointer;
+}
+
+.selectedSize {
+    height: 30px; /* Adjust height */
+    width: 40px; /* Adjust width */
+    max-width:40px;
+    font-size: 10px; /* Adjust font size */
+    text-align: center; /* Center text */
+    background-color: pink;
+}
+
+.unavailable {
+     height: 30px; /* Adjust height */
+     width: 40px; /* Adjust width */
+     max-width:40px;
+     font-size: 10px; /* Adjust font size */
+     text-align: center; /* Center text */
+    cursor: not-allowed;
+    background-color: #f5f5f5; /* Light grey to indicate it's unavailable */
+    color: #a0a0a0; /* Grey text color */
+    text-decoration: line-through;
+    border:none;
+}
+
+
+.cross {
+    position: absolute; /* Position the cross over the size box */
+    top: 0; /* Align with the top of the container */
+    left: 0; /* Align with the left of the container */
+    width: 100%; /* Full width of the container */
+    height: 100%; /* Full height of the container */
+    display: flex; /* Center the cross */
+    align-items: center;
+    justify-content: center;
+    color: grey; /* Color of the cross */
+    font-size: 60px; /* Size of the cross */
+    font-weight:light;
+    pointer-events: none; /* Prevent the cross from capturing clicks */
+}
+

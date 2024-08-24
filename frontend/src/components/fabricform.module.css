@@ -2,6 +2,7 @@
     width:100%;
     margin: 0 auto;
     text-align:center;
+    margin-right:'100px';
 }
 h2{
     margin-bottom:20px;
@@ -17,9 +18,11 @@ display:flex;
 }
  td:nth-child(1) {
     width: 20%;
+    text-align:left;
 }
 td:nth-child(2) {
     width: 80%;
+    text-align:left;
 }
 
 
@@ -52,7 +55,7 @@ input[type="textarea"] {
 .button {
     height:30px;
     width:80px;
-  background-color: e878bd; /* Green background */
+  background-color: e878bd; /* grey background */
   color: #850e57; /* White text */
   font-size: 16px; /* Font size */
   border: none; /* No border */
@@ -62,7 +65,7 @@ input[type="textarea"] {
 }
 
 .button:hover {
-  background-color: #f1aac8; /* Darker green background on hover */
+  background-color: #850e57; /* Darker green background on hover */
   color:white;
 }
 
@@ -71,3 +74,9 @@ input[type="textarea"] {
   margin-top:2.5px;
 }
 
+td.help_text {
+    font-size: 0.875em; /* Slightly smaller font size */
+    color: #6c757d;     /* Subtle gray color */
+    font-style: italic; /* Italic style */
+    padding-top: 4px;   /* Add some spacing at the top */
+}

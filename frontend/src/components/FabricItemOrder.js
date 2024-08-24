@@ -16,14 +16,17 @@ const FabricItemOrder=(props)=>{
     const navigate=useNavigate();
     const {createOrder, status, item,orders}=useContext(OrderContext);
     const authCtx=useContext(AuthContext);
-    const {id,category,sub_category, type, desc, details, rate,image,created_by}=props.item;
+    const {id,category,sub_category, type, desc, details, rate,image,created_by, variants, size,stock}=props.item;
+    console.log(stock, size);
     const dispatch=useDispatch();
     const cart=useSelector((state)=>state.cart);
     const showCart=useSelector((state)=>state.ui.cartIsVisible);
     dispatch(uiActions.clearNotification());
     const modal=useRef();
-    const [stock,setStock]= useState(0);
+    //const [stock,setStock]= useState(0);
     const [stockMsg, setStockMsg]= useState(null);
+    const [selectedSize, setSelectedSize]= useState(null);
+    //const [sizeOutofStock, setSizeOutofStock] =useState([]);
     const wishlistCtx=useContext(WishlistContext);
     const {wishlist, updateWishlist}=wishlistCtx;
     //const storedOrders=[JSON.parse(localStorage.getItem('orders'))];
@@ -31,7 +34,7 @@ const FabricItemOrder=(props)=>{
     useEffect(() => {
 
     if(id){
-        checkAvailability();
+        //checkAvailability();
         if(stock<=2 && category!=='fabrics')
             setStockMsg(`Last ${stock} remaining`);
         if(stock<=2 && category==='fabrics')
@@ -68,20 +71,38 @@ const FabricItemOrder=(props)=>{
 
     const addToCart=(e)=>{
         e.preventDefault();
+        console.log(selectedSize);
         if(stock===0){
             alert("Insufficient stock!")
             return;
         }
-       if(Number(quantity)===0 || quantity.trim()===''){
+
+        if(stock<Number(quantity)){
+        setStockMsg(`Insufficient stock! Only ${stock}${category==='fabrics'?'mts':'pcs'} available `);
+        return;
+    }
+
+       if(Number(quantity)<1 || quantity.trim()===''){
             alert("Enter quantity");
             return;
        }
+
+
+       if(category.toLowerCase()!=='fabrics'){
+           if (!Number.isInteger(Number(quantity))) {
+                   alert("Quantity must be a whole number.");
+                   return;
+           }
+       }
+
+
         // update stock and set timer
        const updateStock=async(id, quantity)=>{
+
        const stock_response=await fetch('http://localhost:5000/store/stock',{
                            method:'PUT',
                            headers:{'content-type':'application/json'},
-                           body:JSON.stringify({id:id,quantity:quantity})
+                           body:JSON.stringify({id:id,quantity:quantity,size:selectedSize})
            });
            if(stock_response){
                const updatedStock=await stock_response.json();
@@ -101,6 +122,7 @@ const FabricItemOrder=(props)=>{
                                                 sub_category,
                                                 desc,
                                                 details,
+                                                size:selectedSize,
                                                 quantity:quantity}}));
 
         dispatch(uiActions.setCartVisibility(true));
@@ -111,11 +133,13 @@ const FabricItemOrder=(props)=>{
               updateStock(id, -quantity);
               dispatch(cartActions.releaseStock({id:id}));   //release stock alloted in cart after 15 mins
             }
-          }, 5000); // 1 minute in milliseconds
+          }, 60000); // 1 minute in milliseconds
         navigate('/Cart');
+                //dispatch(uiActions.setCartVisibility(true));
+
     };
 
-    const checkAvailability=async()=>{
+    /*const checkAvailability=async()=>{
         const stockResp=await fetch(`http://localhost:5000/store/stock/${id}`);
         console.log(id, stockResp);
         if(stockResp){
@@ -130,7 +154,7 @@ const FabricItemOrder=(props)=>{
                 return;
             }
         }
-    }
+    }*/
     const wishlistHandler=(id)=>{
 
     let newWishlist=[...wishlist]
@@ -149,7 +173,7 @@ const FabricItemOrder=(props)=>{
 
     const checkoutHandler=async(e)=>{
     e.preventDefault();
-    checkAvailability();
+    //checkAvailability();
     if(stock===0){
         setStockMsg("Out of stock!")
         return;
@@ -158,16 +182,23 @@ const FabricItemOrder=(props)=>{
         setStockMsg("Insufficient stock!")
         return;
     }
-    if(Number(quantity)===0 || quantity.trim()===''){
-     alert("Enter quantity");
-     return;
+    if(Number(quantity)<1 || quantity.trim()===''){
+        alert("Enter quantity");
+        return;
     }
+    if(category.toLowerCase()!=='fabrics'){
+        if (!Number.isInteger(Number(quantity))) {
+            alert("Quantity must be a whole number.");
+            return;
+        }
+    }
+
     const amount=rate*quantity;
-    const order_item={id,item_status:'created',type,rate,image,quantity,amount,created_by,category,sub_category,details,desc};
+    const order_item={id,item_status:'created',type,rate,image,quantity,amount,created_by,category,sub_category,details,desc,size};
 
     try{
     //check Stock in store for order_item
-    checkAvailability();
+    //checkAvailability();
 
     if(!authCtx.isLoggedIn){
         navigate('/user?mode=login&order=open');
@@ -202,41 +233,72 @@ const FabricItemOrder=(props)=>{
   };
 return(
 <>
-<section className={classes.section} style={{marginTop:'50px',alignItems:'left'}}>
+<section className={classes.section} style={{marginTop:'20px',alignItems:'left'}}>
     <form>
     <div className={classes.disp}>
         {stockMsg && <div className={classes.message}>{stockMsg}</div>}
 
+    <div style={{textAlign:'right',width:'500px'}}>
+      {(wishlist && (wishlist.filter((itm)=>itm===String(id))).length!==0) ?
+          (<i onClick={()=>wishlistHandler(id)} style={{color:'red',verticalAlign:'middle', fontSize:'30px'}}class="fa-regular fa-heart"></i>)
+        :(<i onClick={()=>wishlistHandler(id)} style={{color:'grey',verticalAlign:'middle', fontSize:'30px'}}class="fa-regular fa-heart"></i>)}
+      </div>
     {category && category.toLowerCase()==='fabrics' && (<>
-    <div style={{color:'black'}}>{desc}</div>
+    <div>{desc}</div>
     <div><span style={{color:'black'}}>Price:</span><span>{rate} </span><span style={{color:'black'}}>Rs/meter</span></div>
-    <div><span  style={{color:'black'}}> Quantity:</span><span style={{color:'black'}}><input disabled={stock<=0} style={{width:'100px'}} onChange={handleChange} name="qty" type="text"  /></span><span style={{color:'black'}}>meter</span></div>
+    <div><span style={{color:'black'}}> Quantity:</span><span style={{color:'black'}}><input disabled={stock<=0} style={{width:'100px'}} onChange={handleChange} name="qty" type="text"  /></span><span style={{color:'black'}}>meter</span></div>
     <div><span style={{color:'black',fontSize:'12px'}}>Minimum Order 1 meter</span></div></>)}
 
     {category && category.toLowerCase()!=='fabrics' && (<>
-    <div style={{color:'black'}}>{desc}</div>
-    <div><span  style={{color:'black'}}>Price:</span><span style={{color:'black'}}>Rs</span><span style={{color:'black'}}>{rate}/- </span></div>
-    <div><span style={{color:'black'}}> Quantity:</span><span style={{color:'black'}}><input disabled={stock<=0} style={{width:'100px'}} onChange={handleChange} name="qty" type="text"  /></span></div></>)}
+    <div style={{color:'grey'}}>{desc}</div>
+    <div><span  style={{color:'grey'}}>Price:</span><span style={{color:'grey'}}>Rs</span><span style={{color:'grey'}}>{rate}/- </span></div>
+    <div><span style={{color:'grey'}}> Quantity:</span><span style={{color:'black'}}><input disabled={stock<=0} style={{width:'100px'}} onChange={handleChange} name="qty" type="text"  /></span></div></>)}
 
+    {size && (<div>
+        <div style={{fontSize:'10px'}}>SIZE</div>
+        <div className={classes.sizeContainer}>
+        <input onClick={Number(size.XS) !== 0 ? ()=>setSelectedSize('XS'): undefined} className={`${classes.sizeBox} ${Number(size.XS)===0 ? classes.unavailable : ''} ${selectedSize === 'XS' ? classes.selectedSize : ''}`}  type='text' defaultValue="XS" readOnly />
+        <input onClick={Number(size.S) !== 0 ? ()=>setSelectedSize('S'): undefined} className={`${classes.sizeBox} ${Number(size.S)===0 ? classes.unavailable : ''} ${selectedSize === 'S' ? classes.selectedSize : ''}`}  type='text' defaultValue="S" readOnly />
+        <input onClick={Number(size.M) !== 0 ? ()=>setSelectedSize('M'): undefined} className={`${classes.sizeBox} ${Number(size.M)===0 ? classes.unavailable : ''} ${selectedSize === 'M' ? classes.selectedSize : ''}`}  type='text' defaultValue="M" readOnly />
+        <input onClick={Number(size.L) !== 0 ? ()=>setSelectedSize('L'): undefined} className={`${classes.sizeBox} ${Number(size.L)===0 ? classes.unavailable : ''} ${selectedSize === 'L' ? classes.selectedSize : ''}`}  type='text' defaultValue="L" readOnly />
+        <input  onClick={Number(size.XL) !== 0 ? ()=>setSelectedSize('XL'): undefined}className={`${classes.sizeBox} ${Number(size.XL)===0 ? classes.unavailable : ''} ${selectedSize === 'XL' ? classes.selectedSize : ''}`}  type='text' defaultValue="XL" readOnly />
+        <input onClick={Number(size.XXL) !== 0 ? ()=>setSelectedSize('XXL'): undefined} className={`${classes.sizeBox} ${Number(size.XXL)===0 ? classes.unavailable : ''} ${selectedSize === 'XXL' ? classes.selectedSize : ''}`}  type='text' defaultValue="XXL" readOnly />
 
+        </div>
+        </div>
+    )}
 
+    {variants && variants.length>0 &&
+       (<div>
+           <div style={{fontSize:'10px'}}>COLOR</div>
+           <div style={{display:'flex',flexDirection:'row'}}>
+           {
+               variants.map(variant=>(<div style={{width:'100px', textAlign:'center'}}>
+               <div key={variant._id}><img style={{height:'120px',width:'80px'}} src={variant.image[0]}/></div>
+               <div style={{fontSize:'12px'}}>{variant.colour}</div>
+               </div>))
+           }
+           </div>
+       </div>)
+       }
 
-    {Array.isArray(details) && details.length>0 &&
-     <div className={classes.details}>
-        <div style={{color:'black'}}>Product details:</div>
-        <div style={{color:'black'}}>{details[0]}</div>
-        <div style={{color:'black'}}>{details[1]}</div>
-     </div>}
-
-      <div className={classes.actions}>
-         <button style={{color:'black',fontSize:'10px'}} disabled={stock<=0} onClick={addToCart}>ADD TO CART</button>
-         <button  style={{color:'black',fontSize:'10px'}}disabled={stock<=0} onClick={checkoutHandler}>BUY IT NOW</button>
+    <div className={classes.actions}>
+         <button style={{color:'black',fontSize:'12px'}} disabled={stock<=0} onClick={addToCart}>ADD TO CART</button>
+         <button  style={{color:'black',fontSize:'12px'}}disabled={stock<=0} onClick={checkoutHandler}>BUY IT NOW</button>
      </div>
-      <div className={classes.actions}>
-      {(wishlist && (wishlist.filter((itm)=>itm===String(id))).length!==0) ?
-          (<i onClick={()=>wishlistHandler(id)} style={{color:'red',verticalAlign:'middle', fontSize:'30px'}}class="fa-regular fa-heart"></i>)
-        :(<i onClick={()=>wishlistHandler(id)} style={{color:'black',verticalAlign:'middle', fontSize:'30px'}}class="fa-regular fa-heart"></i>)}
-      </div>
+
+
+
+    {details && details.length>0 && (
+     <div className={classes.details}>
+     <div style={{color:'black'}}>Product details:</div>
+     {details.map(detail=> (
+        <div style={{color:'black'}}>- {detail}</div>
+      ))}
+     </div>
+     )}
+
+
 
      </div>
     </form>
