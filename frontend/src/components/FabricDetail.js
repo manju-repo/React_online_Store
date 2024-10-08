@@ -7,7 +7,7 @@ import FabricItem from './FabricItem';
 import FabricsList from './FabricsList';
 import {uiActions} from '../Store/ui_slice';
 
-function FabricDetailPage(){
+const FabricDetailPage=()=>{
 const [fabric,setFabric]=useState([]);
 const [fabrics,setFabrics]=useState([]);
 const dispatch=useDispatch();

@@ -18,14 +18,13 @@ function FabricsPage() {
   console.log("qry ",queryString);
     const fetchFabrics=async(dispatch)=>{
         try{
-        console.log("in fabrics useeffect");
 
               const response = await fetch(`http://localhost:5000/${category}${queryString}`);
               if (!response.ok) {
                 throw new Error('Fetching Fabrics failed')
               }
               const resData = await response.json();
-              console.log(resData);
+              //console.log(resData);
               setFabrics(resData);
           }catch(error){
               /*dispatch(

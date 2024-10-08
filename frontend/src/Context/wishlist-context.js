@@ -1,7 +1,9 @@
-import {createContext} from 'react';
+import {useState, createContext, useEffect} from 'react';
 
-export const WishlistContext= createContext({
-    wishlist:[],
-    updateWishlist:()=>{},
-    clearWishlistContext:()=>{},
+export const WishlistContext = createContext({
+  wishlist: [],
+  updateWishlist: () => {},
+  showModal: false,
+  modalOpen: () => {},
 });
+

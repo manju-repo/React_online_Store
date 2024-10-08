@@ -1,0 +1,23 @@
+.fields{
+    display:flex;
+    align-items: flex-start;
+}
+
+.fields label{
+    padding:0;
+    margin-left:0;
+    width:200px;
+    minWidth:200px;
+}
+
+.fields input{
+    width:500px;
+    maxWidth:500px;
+    minWidth:500px;
+}
+
+.fields textarea{
+    width:500px;
+    maxWidth:500px;
+    minWidth:500px;
+}

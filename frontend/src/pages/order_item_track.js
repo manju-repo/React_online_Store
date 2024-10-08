@@ -12,6 +12,8 @@ const {order_id, item_id}=useParams();
 
 console.log(order_id, item_id);
 const [showUpdates, setShowUpdates] = useState(false);
+const [showUpdatesIcon, setShowUpdatesIcon] = useState('v');
+
 const [orderDetails, setOrderDetails] = useState(null);
 const [itemDetails, setItemDetails] = useState(null);
 const [updates, setUpdates] = useState(null);
@@ -103,13 +105,13 @@ const ButtonComponent = ({ order_id, item_id, buttonText }) => {
         <button
             style={{
                 marginLeft: '0px',
-                color: 'blue',
                 textDecoration: 'none',
                 border: 'none',
                 background: 'none',
                 cursor: 'pointer',
-                fontFamily: 'inherit',
-                fontSize: 'inherit'
+                fontFamily: 'Ariel',
+                fontSize: '20px',
+                width:'300px'
             }}
             onClick={() => returnItem(order_id, [item_id])}
         >
@@ -128,11 +130,11 @@ return(
     marginLeft: '0px',
     marginTop: '100px',
     alignItems: 'left',
-    color: 'blue',
     textDecoration: 'none',
     border: 'none',
     background: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    width:'300px'
   }}
   onClick={() => window.history.back()}
 >
@@ -140,17 +142,19 @@ return(
 </button>
 
     <div style={{ marginLeft: '0px', alignItems: 'center' }}>
-    <NavLink style={{color:'blue',textDecoration:'none',border:'none'}}>
+    <NavLink to={`/fabrics/${item_id}/${itemDetails?.category}`} style={{color:'blue',textDecoration:'none',border:'none'}}>
     <div style={{marginLeft:'20px',marginTop:'20px', display: 'flex', alignItems: 'center' }}>
-    <img style={{width:'200px',height:'200px', margin:'40px'}} src={itemDetails && itemDetails.image[0]}/>
-    <span style={{marginLeft:'20px'}}>{itemDetails && itemDetails.item_status==='created' ? 'Order confirmed':itemDetails && itemDetails.item_status} </span>
+    <img
+    style={{width:'400px',height:'400px', margin:'40px'}} src={itemDetails && itemDetails.image[0]}/>
+    <span style={{marginLeft:'20px',fontFamily: 'Ariel', fontSize: '20px' }}>{itemDetails && itemDetails.item_status==='created' ? 'Order confirmed':itemDetails && itemDetails.item_status} </span>
     </div>
     </NavLink>
 
+
     <div style={{textAlign: 'left' }}>
         <button
-        style={{ marginLeft: '0px', color: 'blue', textDecoration: 'none', border: 'none', background: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit'  }}
-        onClick={toggleUpdates}>Track</button>
+        style={{ width:'300px',marginLeft: '0px', textDecoration: 'none', border: 'none', background: 'none', cursor: 'pointer', fontFamily: 'Ariel', fontSize: '20px'  }}
+        onClick={toggleUpdates}>Track Item <span style={{fontSize:'10px'}}>{showUpdatesIcon}</span></button>
 
         {showUpdates && itemDetails.status_updates && (
         <div style={{display:'flex',alignItems:'left'}}>

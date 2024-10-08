@@ -80,3 +80,37 @@ td.help_text {
     font-style: italic; /* Italic style */
     padding-top: 4px;   /* Add some spacing at the top */
 }
+
+input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+.custom_file_upload {
+  display: inline-block;
+  cursor: pointer;
+  background-color: light-grey;
+  min-width:400px;
+  color: black;
+  font-size: 14px;
+  border: 2px solid grey;
+height:30px;
+  gap:0;
+  margin:0;
+  padding:0;
+}
+
+.custom_file_upload:hover {
+  background-color: #850e57;
+  color: white;
+  }
+
+.clear_button{
+  display: inline-block;
+    margin:0;
+    gap:0;
+    padding:0;
+    width:20px;
+    height:30px;
+    border: 2px solid grey;
+    align-items:left;
+}

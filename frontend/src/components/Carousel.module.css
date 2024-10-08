@@ -1,0 +1,66 @@
+.carousel {
+  position: relative;
+  overflow: hidden;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+}
+
+.carouselInner {
+  display: flex;
+  transition: transform 2s ease-in-out; /* Smooth transition */
+  width: 100%; /* Full width */
+}
+
+.carouselItem {
+  min-width: 100%; /* Each item takes full width */
+  height: 100%; /* Full height */
+}
+
+.carouselItem img {
+  width: 100%; /* Stretch image to full width */
+  height: 100%;
+  object-fit: cover; /* Ensure image covers the container */
+}
+
+.carouselControlPrev, .carouselControlNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 10px;
+  z-index: 10; /* Ensure arrows are on top of the images */
+}
+
+.carouselControlPrev {
+  left: 10px;
+}
+
+.carouselControlNext {
+  right: 10px;
+}
+
+.carouselIndicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+}
+
+.carouselIndicators button {
+  background-color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.carouselIndicators button.active {
+  background-color: #333;
+}

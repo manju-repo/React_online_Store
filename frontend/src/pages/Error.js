@@ -1,6 +1,6 @@
 import { useRouteError } from 'react-router-dom';
 import MainNavigation from '../layout/MainNavigation';
-import MainMenu from '../components/mainmenu';
+import MainMenu from '../layout/mainmenu';
 import { category } from '../components/category';
 
 function ErrorPage() {

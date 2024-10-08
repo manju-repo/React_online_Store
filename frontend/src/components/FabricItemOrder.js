@@ -1,4 +1,5 @@
-import {useState,useEffect,useRef,useContext} from 'react';
+import React from 'react';
+import {useState,useEffect,useRef,useContext, useCallback} from 'react';
 import {useDispatch,useSelector} from 'react-redux';
 import {useNavigate, NavLink} from 'react-router-dom';
 import classes from './FabricItemOrder.module.css';
@@ -11,19 +12,18 @@ import {OrderContext} from '../Context/order-context';
 import {WishlistContext} from '../Context/wishlist-context';
 import {AuthContext} from '../Context/auth-context';
 
-const FabricItemOrder=(props)=>{
+const FabricItemOrder=React.memo((props)=>{
     const [quantity,setQuantity]=useState(0);
     const navigate=useNavigate();
     const {createOrder, status, item,orders}=useContext(OrderContext);
-    const authCtx=useContext(AuthContext);
+    const {isLoggedIn,token,userId}=useContext(AuthContext);
     const {id,category,sub_category, type, desc, details, rate,image,created_by, variants, size,stock}=props.item;
-    console.log(stock, size);
+    console.log(stock, size, variants);
     const dispatch=useDispatch();
     const cart=useSelector((state)=>state.cart);
     const showCart=useSelector((state)=>state.ui.cartIsVisible);
-    dispatch(uiActions.clearNotification());
-    const modal=useRef();
-    //const [stock,setStock]= useState(0);
+    //dispatch(uiActions.clearNotification());
+   // const modal=useRef();
     const [stockMsg, setStockMsg]= useState(null);
     const [selectedSize, setSelectedSize]= useState(null);
     //const [sizeOutofStock, setSizeOutofStock] =useState([]);
@@ -31,9 +31,14 @@ const FabricItemOrder=(props)=>{
     const {wishlist, updateWishlist}=wishlistCtx;
     //const storedOrders=[JSON.parse(localStorage.getItem('orders'))];
     //console.log(storedOrders);
-    useEffect(() => {
+    const [products, setProducts] = useState(() => {
+    const savedProducts = JSON.parse(localStorage.getItem('products')) || [];   //Lazy Initialization
+  return savedProducts;
+});
 
-    if(id){
+
+    useEffect(() => {
+console.log('in ue');
         //checkAvailability();
         if(stock<=2 && category!=='fabrics')
             setStockMsg(`Last ${stock} remaining`);
@@ -41,17 +46,24 @@ const FabricItemOrder=(props)=>{
             setStockMsg(`Only ${stock}meter(s) in stock`);
         if(stock<=0)
             setStockMsg("Out of stock");
-        }
-        return()=>{
+
+
+        /*return()=>{
+        console.log('in ue return');
+
                     (async()=>{
                     if(!authCtx.isLoggedIn) return;
                     const lsWishlist=JSON.parse(localStorage.getItem("Wishlist"));
+                    console.log("ws
+                     ",lsWishlist);
+                    if(!lsWishlist) return;
                      try{
                         await fetch(
                             `http://localhost:5000/user/wishlist`,
                         {
                             method: 'PUT',
-                            headers:{'content-type':'application/json'},
+                            headers:{'content-type':'application/json',
+                                    },
                             body:JSON.stringify({
                               id:authCtx.userId,
                               wishlist:lsWishlist})
@@ -61,8 +73,8 @@ const FabricItemOrder=(props)=>{
                         console.log(error);
                     }
                 })();
-              }
-      }, [stock, id,wishlist]);
+              }*/
+      }, [id,stock,products]);
 
     const handleChange=(e)=>{
         e.preventDefault();
@@ -71,29 +83,53 @@ const FabricItemOrder=(props)=>{
 
     const addToCart=(e)=>{
         e.preventDefault();
-        console.log(selectedSize);
-        if(stock===0){
-            alert("Insufficient stock!")
+       if(category.toLowerCase()==='fabrics')
+            setSelectedSize('sizeOne');
+        console.log(selectedSize, stock, quantity);
+
+        const setLowStock=async()=>{
+            //alert(`${selectedSize}`);
+            const stock_response=await fetch('http://localhost:5000/store/lowStockAlert',{
+                          method:'PUT',
+                          headers:{'content-type':'application/json'},
+                          body:JSON.stringify({id:id,size:selectedSize})
+            });
+
+        }
+         if(Number(quantity)<1 || quantity.trim()===''){
+            alert("Enter quantity");
+            return;
+         }
+
+
+
+        if(category.toLowerCase()!=='fabrics'){
+            if (!Number.isInteger(Number(quantity))) {
+                   alert("Quantity must be a whole number.");
+                   return;
+            }
+            if(!selectedSize){
+                    alert("Select Size");
+                    return;
+            }
+            if(size[`${selectedSize}`]<quantity){
+                alert(`Insufficient stock! Only ${size[`${selectedSize}`]} pc(s) available `);
+                const confirm=window.confirm('do you wish to be notified when available?');
+                if(confirm)
+                    notifyHandler();
+                setLowStock();
+                return;
+            }
+        }
+        else if(stock<quantity){
+            alert(`Insufficient stock! Only ${stock} meter(s) available`);
+            const confirm=window.confirm('do you wish to be notified when available?');
+                if(confirm)
+                    notifyHandler();
+            setLowStock();
             return;
         }
 
-        if(stock<Number(quantity)){
-        setStockMsg(`Insufficient stock! Only ${stock}${category==='fabrics'?'mts':'pcs'} available `);
-        return;
-    }
-
-       if(Number(quantity)<1 || quantity.trim()===''){
-            alert("Enter quantity");
-            return;
-       }
-
-
-       if(category.toLowerCase()!=='fabrics'){
-           if (!Number.isInteger(Number(quantity))) {
-                   alert("Quantity must be a whole number.");
-                   return;
-           }
-       }
 
 
         // update stock and set timer
@@ -128,7 +164,7 @@ const FabricItemOrder=(props)=>{
         dispatch(uiActions.setCartVisibility(true));
 
         setTimeout(() => {
-            console.log("in settimeout",quantity);
+           // console.log("in settimeout",quantity);
             if (!status || (status && Array.isArray(item) && item.find(itm=>itm.id===id))) {      //check if not present in order items and present in cart items
               updateStock(id, -quantity);
               dispatch(cartActions.releaseStock({id:id}));   //release stock alloted in cart after 15 mins
@@ -137,6 +173,57 @@ const FabricItemOrder=(props)=>{
         navigate('/Cart');
                 //dispatch(uiActions.setCartVisibility(true));
 
+    };
+
+    const notifyHandler=async()=>{
+        console.log("in notify");
+
+    //const productId=id;
+        if(!isLoggedIn) {
+            alert("Login to receive notifications");
+             return;
+        }
+
+
+        let newProducts = [...products];
+        let notify=true;
+
+        const productIdStr = id;
+        console.log("Checking if newProducts includes productId:", newProducts.includes(productIdStr));
+
+        if (products.includes(productIdStr)){
+        console.log("prod there");
+            notify=false;
+            newProducts = newProducts.filter(prodId => prodId !== productIdStr);
+        }else {
+            newProducts.push(productIdStr); // Add the product if it's not in the array
+            console.log("Product added. Updated products array:", newProducts);
+        }
+            console.log("np",newProducts);
+        try{
+             const response = await fetch(`http://localhost:5000/subscription/notifyMe/${id}`, {
+              method: 'POST',
+              headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization':'Bearer '+ token
+              },
+              body:JSON.stringify({notify:notify, notificationType:'Stock update'})
+            });
+            console.log("response",response);
+            if (!response.ok) {
+            console.log("error");
+              throw new Error('Something went wrong');
+            }
+            //localStorage.removeItem('products');
+            console.log(newProducts);
+            localStorage.setItem("products",JSON.stringify(newProducts));
+            setProducts(newProducts);
+            console.log('new products list',newProducts);
+            //setProducts(newProducts);
+            //alert(`Product notification ${notify ? 'enabled' : 'disabled'} for productId: ${productIdStr}`);
+        }catch(error){
+            console.log("Could not notify",error);
+        }
     };
 
     /*const checkAvailability=async()=>{
@@ -200,7 +287,7 @@ const FabricItemOrder=(props)=>{
     //check Stock in store for order_item
     //checkAvailability();
 
-    if(!authCtx.isLoggedIn){
+    if(!isLoggedIn){
         navigate('/user?mode=login&order=open');
         return
     }
@@ -208,9 +295,9 @@ const FabricItemOrder=(props)=>{
         const response = await fetch('http://localhost:5000/orders',{
                         method:'POST',
                         headers:{
-                            'Authorization': `Bearer ${authCtx.token}`,
+                            'Authorization': `Bearer ${token}`,
                             'content-type':'application/json'},
-                        body:JSON.stringify({items:[order_item],totalQuantity:quantity,totalAmount:amount,client_id:authCtx.userId})
+                        body:JSON.stringify({items:[order_item],totalQuantity:quantity,totalAmount:amount,client_id:userId})
         });
         const {orderId} = await response.json();
 
@@ -236,9 +323,15 @@ return(
 <section className={classes.section} style={{marginTop:'20px',alignItems:'left'}}>
     <form>
     <div className={classes.disp}>
-        {stockMsg && <div className={classes.message}>{stockMsg}</div>}
+        {stockMsg && <div className={classes.message}>{stockMsg}
+        {(isLoggedIn && stock===0 && products && !products.includes(id)) &&
+         (<span><button type="button" className={classes.notifyMessage} onClick={notifyHandler}>
+        Notify me when available</button></span>)}
+        {(isLoggedIn && stock===0 && products && products.includes(id)) &&
+        (<span><button type="button" className={classes.notifyMessage} onClick={notifyHandler}>Undo Notify me</button></span>)}
+    </div>}
 
-    <div style={{textAlign:'right',width:'500px'}}>
+    <div style={{textAlign:'right',width:'100%'}}>
       {(wishlist && (wishlist.filter((itm)=>itm===String(id))).length!==0) ?
           (<i onClick={()=>wishlistHandler(id)} style={{color:'red',verticalAlign:'middle', fontSize:'30px'}}class="fa-regular fa-heart"></i>)
         :(<i onClick={()=>wishlistHandler(id)} style={{color:'grey',verticalAlign:'middle', fontSize:'30px'}}class="fa-regular fa-heart"></i>)}
@@ -254,16 +347,15 @@ return(
     <div><span  style={{color:'grey'}}>Price:</span><span style={{color:'grey'}}>Rs</span><span style={{color:'grey'}}>{rate}/- </span></div>
     <div><span style={{color:'grey'}}> Quantity:</span><span style={{color:'black'}}><input disabled={stock<=0} style={{width:'100px'}} onChange={handleChange} name="qty" type="text"  /></span></div></>)}
 
-    {size && (<div>
+    {category && category.toLowerCase()!=='fabrics' && size && (<div>
         <div style={{fontSize:'10px'}}>SIZE</div>
         <div className={classes.sizeContainer}>
-        <input onClick={Number(size.XS) !== 0 ? ()=>setSelectedSize('XS'): undefined} className={`${classes.sizeBox} ${Number(size.XS)===0 ? classes.unavailable : ''} ${selectedSize === 'XS' ? classes.selectedSize : ''}`}  type='text' defaultValue="XS" readOnly />
-        <input onClick={Number(size.S) !== 0 ? ()=>setSelectedSize('S'): undefined} className={`${classes.sizeBox} ${Number(size.S)===0 ? classes.unavailable : ''} ${selectedSize === 'S' ? classes.selectedSize : ''}`}  type='text' defaultValue="S" readOnly />
-        <input onClick={Number(size.M) !== 0 ? ()=>setSelectedSize('M'): undefined} className={`${classes.sizeBox} ${Number(size.M)===0 ? classes.unavailable : ''} ${selectedSize === 'M' ? classes.selectedSize : ''}`}  type='text' defaultValue="M" readOnly />
-        <input onClick={Number(size.L) !== 0 ? ()=>setSelectedSize('L'): undefined} className={`${classes.sizeBox} ${Number(size.L)===0 ? classes.unavailable : ''} ${selectedSize === 'L' ? classes.selectedSize : ''}`}  type='text' defaultValue="L" readOnly />
-        <input  onClick={Number(size.XL) !== 0 ? ()=>setSelectedSize('XL'): undefined}className={`${classes.sizeBox} ${Number(size.XL)===0 ? classes.unavailable : ''} ${selectedSize === 'XL' ? classes.selectedSize : ''}`}  type='text' defaultValue="XL" readOnly />
-        <input onClick={Number(size.XXL) !== 0 ? ()=>setSelectedSize('XXL'): undefined} className={`${classes.sizeBox} ${Number(size.XXL)===0 ? classes.unavailable : ''} ${selectedSize === 'XXL' ? classes.selectedSize : ''}`}  type='text' defaultValue="XXL" readOnly />
-
+        <input onClick={Number(size.sizeXS) !== 0 ? ()=>setSelectedSize('sizeXS'): undefined} className={`${classes.sizeBox} ${Number(size.sizeXS)===0 ? classes.unavailable : ''} ${selectedSize === 'sizeXS' ? classes.selectedSize : ''}`}  type='text' defaultValue="XS" readOnly />
+        <input onClick={Number(size.sizeS) !== 0 ? ()=>setSelectedSize('sizeS'): undefined} className={`${classes.sizeBox} ${Number(size.sizeS)===0 ? classes.unavailable : ''} ${selectedSize === 'sizeS' ? classes.selectedSize : ''}`}  type='text' defaultValue="S" readOnly />
+        <input onClick={Number(size.sizeM) !== 0 ? ()=>setSelectedSize('sizeM'): undefined} className={`${classes.sizeBox} ${Number(size.sizeM)===0 ? classes.unavailable : ''} ${selectedSize === 'sizeM' ? classes.selectedSize : ''}`}  type='text' defaultValue="M" readOnly />
+        <input onClick={Number(size.sizeL) !== 0 ? ()=>setSelectedSize('sizeL'): undefined} className={`${classes.sizeBox} ${Number(size.sizeL)===0 ? classes.unavailable : ''} ${selectedSize === 'sizeL' ? classes.selectedSize : ''}`}  type='text' defaultValue="L" readOnly />
+        <input onClick={Number(size.sizeXL) !== 0 ? ()=>setSelectedSize('sizeXL'): undefined}className={`${classes.sizeBox} ${Number(size.sizeXL)===0 ? classes.unavailable : ''} ${selectedSize === 'sizeXL' ? classes.selectedSize : ''}`}  type='text' defaultValue="XL" readOnly />
+        <input onClick={Number(size.sizeXXL) !== 0 ? ()=>setSelectedSize('sizeXXL'): undefined} className={`${classes.sizeBox} ${Number(size.sizeXXL)===0 ? classes.unavailable : ''} ${selectedSize === 'sizeXXL' ? classes.selectedSize : ''}`}  type='text' defaultValue="XXL" readOnly />
         </div>
         </div>
     )}
@@ -273,10 +365,13 @@ return(
            <div style={{fontSize:'10px'}}>COLOR</div>
            <div style={{display:'flex',flexDirection:'row'}}>
            {
-               variants.map(variant=>(<div style={{width:'100px', textAlign:'center'}}>
+               variants.map(variant=>(
+               <NavLink to={{pathname:`/fabrics/${variant._id}/${variant.category}` }} >
+               <div style={{width:'100px', textAlign:'center'}}>
                <div key={variant._id}><img style={{height:'120px',width:'80px'}} src={variant.image[0]}/></div>
                <div style={{fontSize:'12px'}}>{variant.colour}</div>
-               </div>))
+               </div>
+               </NavLink>))
            }
            </div>
        </div>)
@@ -306,6 +401,6 @@ return(
 
 </>
 );
-}
+});
 
 export default FabricItemOrder;

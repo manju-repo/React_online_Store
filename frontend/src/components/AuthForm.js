@@ -7,10 +7,14 @@ import {
 } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import classes from './AuthForm.module.css';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 const AuthForm=({onSubmit})=>{
-const [userRole,setUserRole]=useState('client');
+    const [userRole,setUserRole]=useState('client');
+    const [imageName, setImageName] = useState('Choose Image...');
+    const [showPassword, setShowPassword] =useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] =useState(false);
+
 const {
     register,
     handleSubmit,
@@ -22,8 +26,31 @@ const navigate= useNavigate();
 
   const submitHandler = (data) => {
     data.user_type=userRole;
+    const submitHandler = (data) => {
+        data.user_type = userRole;
+
+        // Convert the form data to FormData to handle file upload
+        const formData = new FormData();
+        Object.keys(data).forEach(key => {
+          if (key === 'profileImage') {
+            formData.append(key, data[key][0]); // Append the file
+          } else if (Array.isArray(data[key])) {
+            data[key].forEach((item, index) => {
+              formData.append(`${key}[${index}]`, item);
+            });
+          } else {
+            formData.append(key, data[key]);
+          }
+        });
+
+        onSubmit(formData);
+      };
     onSubmit(data);
   };
+
+  useEffect(() => {
+    reset({ password: '',confirm_password:'' });
+  }, [userRole, reset]);
 
    const resetHandler=()=>{
         console.log("in reset");
@@ -34,8 +61,18 @@ const navigate= useNavigate();
    event.preventDefault();
        setUserRole(role);
   };
+ const handleFileChange = (event) => {
+    setImageName(event.target.files[0].name);
+    console.log(event.target.files[0].name);
+  };
 
+  const showPasswordHandler=()=>{
+    setShowPassword(prevState => !prevState);
+  }
 
+  const showConfirmPasswordHandler=()=>{
+    setShowConfirmPassword(prevState => !prevState);
+  }
   const [searchParams] = useSearchParams();
   const isLogin = searchParams.get('mode') === 'login';
 
@@ -62,7 +99,7 @@ const navigate= useNavigate();
 
                  <div className={classes.control}>
                    <label htmlFor="password">Password</label>
-                   <input id="password" type="password" name="password"
+                   <input id="password" type={showPassword ?"text": "password"} name="password"
                    {...register("password", {
                      required: "Password is required.",
                      minLength: {
@@ -71,6 +108,7 @@ const navigate= useNavigate();
                      }
                    })}
                  />
+                 <span style={{width:'20px'}}><i onClick={showPasswordHandler} class="fa-solid fa-eye"></i></span>
                   {errors.password && (<p className="errorMsg">{errors.password.message}</p>)}
                  </div>
             </>
@@ -109,7 +147,7 @@ const navigate= useNavigate();
 
         <div className={classes.control}>
           <label htmlFor="password">Password</label>
-          <input id="password" type="password" name="password"
+           <input id="password" type={showPassword ?"text": "password"} name="password"
           {...register("password", {
             required: "Password is required.",
             minLength: {
@@ -118,17 +156,17 @@ const navigate= useNavigate();
             }
           })}
         />
+         <span style={{width:'20px'}}><i onClick={showPasswordHandler} class="fa-solid fa-eye"></i></span>
          {errors.password && (<p className="errorMsg">{errors.password.message}</p>)}
         </div>
 
          <div className={classes.control}>
            <label htmlFor="confirm_password">Confirm Password</label>
-           <input
-             id="confirm_password"
-             type="password"
-             name="confirm_password"
+           <input id="confirm_password" type={showConfirmPassword ?"text": "password"} name="confirm_password"
               {...register("confirm_password", { required: "confirm_password is required." })}
            />
+
+           <span style={{width:'20px'}}><i onClick={showConfirmPasswordHandler} class="fa-solid fa-eye"></i></span>
            {errors.confirm_password && (<p className="errorMsg">{errors.confirm_password.message}</p>)}
          </div>
          <div className={classes.control}>
@@ -137,12 +175,35 @@ const navigate= useNavigate();
               id="phone"
               type="text"
               name="phone"
-               {...register("phone", { required: "Phone Number is required." })}
+               {...register("phone", { required: "Phone Number is required.",
+                minLength: {
+                              value: 10,
+                              message: "Please enter a valid 10-digit phone number"
+                            },
+                maxLength: {
+                              value: 10,
+                              message: "Please enter a valid 10-digit phone number"
+                            }
+                            })}
             />
             {errors.phone && (
                  <p className="errorMsg">{errors.phone.message}</p>)}
           </div>
 
+          <div className={classes.control}>
+                <label htmlFor="profileImage">Profile Image</label>
+                <label for="profileImage" className={classes.custom_file_upload}>
+                    {imageName}
+                  </label>
+
+                <input id="profileImage" type="file" name="profileImage"  accept="image/*" {...register("profileImage")}
+                    onChange={(event) => {
+                        register("profileImage").onChange(event);  // Call the default onChange from register
+                        handleFileChange(event);  // Handle updating the file name state
+                      }}
+                    style={{ display: 'none' }}/>
+
+          </div>
           <div className={classes.control}>
             <label style={{minWidth:'240px'}} htmlFor="address">Address</label>
             <div style={{textAlign:'left'}}>
@@ -186,7 +247,7 @@ const navigate= useNavigate();
 
          <div className={classes.control}>
            <label htmlFor="password">Password</label>
-           <input id="password" type="password" name="password"
+           <input id="password" type={showPassword ?"text": "password"} name="password"
            {...register("password", {
              required: "Password is required.",
              minLength: {
@@ -195,17 +256,16 @@ const navigate= useNavigate();
              }
            })}
          />
+         <span style={{width:'20px'}}><i onClick={showPasswordHandler} class="fa-solid fa-eye"></i></span>
           {errors.password && (<p className="errorMsg">{errors.password.message}</p>)}
          </div>
 
           <div className={classes.control}>
             <label htmlFor="confirm_password">Confirm Password</label>
-            <input
-              id="confirm_password"
-              type="password"
-              name="confirm_password"
+            <input id="confirm_password" type={showConfirmPassword ?"text": "password"} name="confirm_password"
                {...register("confirm_password", { required: "confirm_password is required." })}
             />
+         <span style={{width:'20px'}}><i onClick={showConfirmPasswordHandler} class="fa-solid fa-eye"></i></span>
             {errors.confirm_password && (<p className="errorMsg">{errors.confirm_password.message}</p>)}
           </div>
           <div className={classes.control}>
@@ -221,9 +281,14 @@ const navigate= useNavigate();
            </div>
            <div className={classes.control}>
                 <label htmlFor="profileImage">Profile Image</label>
-                <input id="profileImage" type="text" name="profileImage" {...register("profileImage")}/>
+                <label for="profileImage" className={classes.custom_file_upload}>
+                    {imageName}
+                  </label>
 
-              </div>
+                <input id="profileImage" type="file" name="profileImage"  accept="image/*" {...register("profileImage")}
+                    onChange={handleFileChange} style={{ display: 'none' }}/>
+
+          </div>
     </fieldset>
     <fieldset>
     <legend style={{color:'#850e57'}} >Business Details</legend>

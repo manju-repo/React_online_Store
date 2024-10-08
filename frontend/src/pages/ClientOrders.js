@@ -33,11 +33,11 @@ const {userId, token, isAdmin, isLoggedIn}=useContext(AuthContext);
 useEffect(()=>{
 
       const fetchOrders=async()=>{
-      console.log(userId);
+      //console.log(userId);
 
           try{
           let url=null;
-          console.log("admin",isAdmin);
+      //    console.log("admin",isAdmin);
           if(isAdmin){
                 url=`${apiBaseUrl}/vendor/adminOrders/${userId}`;
                 const response=await fetch(url,{
@@ -45,13 +45,13 @@ useEffect(()=>{
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                 },});
-                console.log(response);
+          //      console.log(response);
                 if(!response)
                     throw new Error('Could not fetch your orders');
                 const ordersResp=await response.json();
-                console.log(ordersResp);
+           //     console.log(ordersResp);
                 const ordersData=ordersResp.data;
-                console.log(ordersData);
+           //     console.log(ordersData);
                 if(ordersData && ordersData.length){
                     setAllOrders(ordersData);
 
@@ -81,12 +81,12 @@ useEffect(()=>{
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                 },});
-                console.log(response);
+            //    console.log(response);
                 if(!response)
                     throw new Error('Could not fetch your orders');
                 const ordersResp=await response.json();
                 const orders=ordersResp.data;
-                console.log(orders);
+            //    console.log(orders);
                 if(orders && orders.length){
                     setAllOrders(orders);
 
@@ -98,7 +98,7 @@ useEffect(()=>{
                            items: order.items.filter(item => item.item_status === status) // Filter items by status
                          }))
                          .filter(order => order.items.length > 0); // Ensure the order has items left after filtering
-console.log(allOrders);
+//console.log(allOrders);
 
                       setActiveOrders(allOrders.filter(order => order.status === 'created'));
                       setConfirmedOrders(filterOrders('created'));
@@ -117,12 +117,12 @@ console.log(allOrders);
     },[userId, navigate, activeTab, selectedOrders, adminSelectedOrders]);
 
     const refundPayment = async()=>{
-        console.log(paymentId, amount);
+        //console.log(paymentId, amount);
         try{
              const responseUser=await fetch(`http://localhost:5000/user/${userId}`);
              if(responseUser){
                 const userData=await responseUser.json();
-                console.log(userData);
+                //console.log(userData);
                 const response=await fetch('http://localhost:5000/payment/paymentRefund',{
                                                   method:'POST',
                                                   headers:{
@@ -130,13 +130,13 @@ console.log(allOrders);
                                                         'content-type':'application/json'},
                                                   body:JSON.stringify({amount:amount, paymentId:paymentId})
                                               });
-                 console.log(response);
+                // console.log(response);
                 setAmount(0);
                 setPaymentId(null);
 
                 if(response){
                     const resData=await response.json();
-                    console.log(resData);
+                   // console.log(resData);
                     return { success: resData.success, data: resData.data };
                 }
             }
@@ -189,12 +189,12 @@ console.log(allOrders);
              return acc;
            }, []);
 
-           console.log(ordersForClient[0]);
-           console.log(itemsOfOrder);
+           //console.log(ordersForClient[0]);
+           //console.log(itemsOfOrder);
 
 
-console.log(ordersForClient[0]);
-console.log(itemsOfOrder);
+//console.log(ordersForClient[0]);
+//console.log(itemsOfOrder);
 
    try {
    let response, status_update;
@@ -208,7 +208,7 @@ console.log(itemsOfOrder);
             break;
             case 'refunded':
             {
-                console.log(adminSelectedOrders);
+               // console.log(adminSelectedOrders);
                 statusMsg=`Refund for ${order.itemIds.length} item(s) has been initiated on ${currentDate}. It will be credited to your account in 2/3 working days `;
                 fetchOrderDetails(order.orderId, [order.itemIds]);
                 if(paymentId && amount)
@@ -240,7 +240,7 @@ console.log(itemsOfOrder);
           });
 
           if (!response.ok) throw new Error('Failed to dispatch orders');
-console.log(response);
+//console.log(response);
 
          response = await fetch(`${apiBaseUrl}/orders/updateStatus`, {
             method: 'PUT',
@@ -252,7 +252,7 @@ console.log(response);
           });
 
       if (!response.ok) throw new Error('Failed to return orders');
-console.log(response);
+//console.log(response);
     }
 
       setAdminSelectedOrders([]);
@@ -300,7 +300,7 @@ const updateOrderStatus = async (orderId, itemIds, status, newStatus) => {
           console.error(err.message);
           alert('Failed to return orders');
         }
-        console.log(selectedOrders);
+        //console.log(selectedOrders);
       }
   }
 
@@ -321,14 +321,14 @@ const toggleOrderSelection = (orderId, itemId) => {
   };
 
 const admin_toggleOrderSelection = (clientId, orderId, itemId) => {
-console.log(clientId, orderId, itemId);
-console.log(adminSelectedOrders);
+//console.log(clientId, orderId, itemId);
+//console.log(adminSelectedOrders);
   setAdminSelectedOrders((prevSelected) => {
     const newSelected = [...prevSelected];
     const clientIndex = newSelected.findIndex(item => item.clientId === clientId);
 
-    console.log('========', JSON.stringify(newSelected), orderId, itemId, "===========");
-    console.log(clientIndex);
+    //console.log('========', JSON.stringify(newSelected), orderId, itemId, "===========");
+    //console.log(clientIndex);
 
     if (clientIndex === -1) {
       // If clientId is not present, add a new entry
@@ -337,13 +337,13 @@ console.log(adminSelectedOrders);
       // If clientId is present, toggle the order selection
       const clientOrders = [...newSelected[clientIndex].orders]; // Clone the clientOrders array
 
-      console.log(JSON.stringify(clientOrders));
+      //console.log(JSON.stringify(clientOrders));
 
       const orderIndex = clientOrders.findIndex(
         order => order.orderId === orderId && order.itemId === itemId
       );
 
-      console.log(orderIndex);
+      //console.log(orderIndex);
 
       if (orderIndex !== -1) {
         // If the order is present, remove it
@@ -363,7 +363,7 @@ console.log(adminSelectedOrders);
       }
     }
 
-    console.log(JSON.stringify(newSelected));
+    //console.log(JSON.stringify(newSelected));
 
     return newSelected;
   });

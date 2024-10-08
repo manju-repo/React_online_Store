@@ -7,14 +7,18 @@
 .nav {
   display: flex;
   justify-content: space-between;
+  align-items: center; /* Ensure items are vertically centered */
   list-style-type: none;
   padding: 0;
   margin: 0;
+  height: 100%; /* Ensure the height matches the header or container */
 }
 
 .logo {
   color: #e44da5;
   text-decoration: none;
+  font-family: 'Lobster';
+    font-size: 3.5rem;
 }
 
 .logo h1 {
@@ -24,16 +28,18 @@
 .badge {
   background-color: #a8a8e9;
   border-radius: 50%;
-  padding: 0.05rem 0.2rem;
+  padding: 0.05rem 0.05rem;
   color: #1d1d1d;
   font-style: normal;
-
-
+    height:30px;
+    width:20px;
 }
 
 .nav li {
-color: #e44da5;
   display: flex;
+  align-items: center; /* Center items vertically */
+  height: 100%; /* Match the height of the container */
+  margin: 0 10px; /* Optional: Add some spacing between items */
 }
 
 .nav a {
@@ -56,6 +62,8 @@ text-decoration: none;
 
 .nav i {
   font-size: 1.25rem;
+    padding: 0.5rem;
+
 }
 
 .settingsButton {
@@ -69,4 +77,37 @@ text-decoration: none;
   .nav a {
     padding: 0.25rem;
   }
+}
+
+/* MainNavigation.module.css */
+
+/* Container for the avatar and logout icon */
+.avatarContainer {
+  display: flex;
+  align-items: center;
+
+}
+
+/* Avatar image styling */
+.avatar {
+  width: 40px;             /* Adjust the size as needed */
+  height: 40px;            /* Match the width */
+  border-radius: 50%;      /* Makes the image circular */
+  margin-right: 5px;      /* Adds space between avatar and logout icon */
+  object-fit: cover;       /* Ensures the image fits the container while preserving aspect ratio */
+  border: 2px solid #e44da5; /* Optional: Add a border with a color that matches your theme */
+}
+
+/* Other styles if needed */
+.avatar:hover {
+  cursor: pointer;         /* Optional: Adds a pointer cursor on hover */
+  opacity: 0.8;            /* Optional: Adds a slight transparency on hover */
+}
+
+
+.right {
+  display: flex;
+  align-items: center;  /* Vertically center the content */
+  justify-content: center;
+  height: 100%;
 }

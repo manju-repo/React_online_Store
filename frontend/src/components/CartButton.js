@@ -22,10 +22,12 @@ const CartButton=()=>{
       };
 
       return(
-      <button  className={classes.button} onClick={toggleCartHandler} style={{ position: "relative" }}><NavLink to="/cart">
-            <i  style={{color:'#e44da5'}} className="fa-solid fa-cart-shopping"></i>
-            <i className={classes.badge} style={{ position: "absolute", top: "-15px", right: "0px",  fontSize:"0.75rem" }}>{cartQuantity}</i>
-     </NavLink>  </button>
+      <button  className={classes.button} onClick={toggleCartHandler} style={{ position: "relative",height:'100%',width:'65px',justifyContent:'center',marginRight:'0px',margin:'0px',cellPadding:'none' }}>
+      <NavLink style={{ position: "relative"}} to="/cart">
+            <i  style={{color:'#e44da5',justifyContent:'bottom'}} className="fa-solid fa-cart-shopping"></i>
+            {cartQuantity>0 && (<i className={classes.badge}  style={{ position: "absolute", top: "-35px", right: "-35px",  fontSize:"0.75rem" }}>{cartQuantity}</i>)}
+     </NavLink>
+     </button>
       );
     };
 

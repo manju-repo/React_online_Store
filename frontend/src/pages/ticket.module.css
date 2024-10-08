@@ -1,0 +1,17 @@
+.ticket{
+    display:flex;
+    align-items:left;
+    width:100%;
+    padding: 10px; /* Adding padding to make the hover effect more visible */
+    transition: color 0.3s ease; /* Smooth transition for the color change */
+}
+
+.ticket div{
+    marginLeft:'100px';
+    textAlign:'left';
+
+}
+
+.ticket:hover {
+    background-color: lightgrey; /* Changes background color on hover */
+}

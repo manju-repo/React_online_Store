@@ -1,0 +1,30 @@
+.ticket{
+    display:flex;
+    align-items:left;
+    width:100%;
+    padding: 10px; /* Adding padding to make the hover effect more visible */
+    transition: color 0.3s ease; /* Smooth transition for the color change */
+}
+
+.ticket div{
+    margin-left:'100px';
+    text-align:'left';
+
+}
+
+.ticket:hover {
+    background-color: lightgrey; /* Changes background color on hover */
+}
+
+
+.imageclass  {
+    width:150px;
+    height:150px;
+    margin-left:5%;
+    margin-right:10px;
+}
+
+.magnifier {
+    transform: scale(3); /* Example zoom effect */
+    transition: transform 0.2s ease; /* Smooth zoom transition */
+}

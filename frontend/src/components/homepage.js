@@ -1,7 +1,12 @@
 import classes from './ItemList.module.css';
 import {NavLink} from 'react-router-dom';
 import {useState, useEffect} from 'react';
+import Carousel from '../components/Carousel';
 const [items,setItems]=useState(null);
+const images = [
+    'http://localhost:5000/Images/banner1.webp',
+    'http://localhost:5000/Images/banner2.webp',
+  ];
 function HomePage() {
 
  useEffect(() => {
@@ -22,8 +27,10 @@ function HomePage() {
 
     },[]);
 
-  return (
-    <div className={classes.events}>
+  return (<>
+       <div> <Carousel images={images} /></div>
+
+  {/*  <div className={classes.events}>
 
       <ul className={classes.list}>
         {items.map((item) => (
@@ -34,8 +41,8 @@ function HomePage() {
           </li>
         ))}
       </ul>
-    </div>
-  );
+    </div>*/}
+  </>);
 }
 
 export default ItemList;

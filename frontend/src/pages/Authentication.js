@@ -2,91 +2,108 @@ import {useState} from 'react';
 import AuthForm from '../components/AuthForm';
 import {json, redirect, useParams, useNavigate} from'react-router-dom';
 import {AuthContext} from '../Context/auth-context';
+import {NotificationContext} from '../Context/notification-context';
+
 import {useContext, useEffect} from'react';
 import Notification from '../components/notification';
 
 
 const AuthenticationPage=()=>{
 const authCtx=useContext(AuthContext);
+const notCtx=useContext(NotificationContext);
 const navigate= useNavigate();
 const [errors, setErrors]=useState();
-if(authCtx.isLoggedIn) window.history.back();
-let mode='login';
-let order='';
-        const searchParams = new URL(window.location.href).searchParams;
-         mode = searchParams.get('mode') ;
-         order = searchParams.get('order') ;
-         console.log(order);
-         if (!(mode === 'login' || mode === 'signup' || mode==='logout')) {
-             setErrors('Invalid login mode');
-             return;
-          }
+const [mode, setMode] = useState(null);
+    const [order, setOrder] = useState('');
 
-        //redirect('/');
+    useEffect(() => {
+        // Initialize `mode` and `order` based on query parameters
+        const searchParams = new URLSearchParams(window.location.search);
+        const currentMode = searchParams.get('mode');
+        const currentOrder = searchParams.get('order');
+        setMode(currentMode || 'login');
+        setOrder(currentOrder || '');
+        console.log(searchParams.get('mode'));
+    });
 
-
-
+    useEffect(() => {
+        if (authCtx.isLoggedIn) {
+            navigate('/homepage');
+        }
+    }, [authCtx.isLoggedIn, navigate]);
 
     const getData=async(formData)=>{
-
-     if (mode==='signup' && (formData.password !== formData['confirm_password']))
-                 setErrors(['Password and Confirm Password not matching']);
-
-        //throw json({ message: 'Password and Confirm Password not matching' }, { status: 422 });
-
-     const authData={
-        email: formData.email,
-        password: formData.password,
-     };
-
-     authData.user_type=formData.user_type;
-     console.log(authData);
-
+console.log(mode);
+if(!mode) return;
+     if (mode==='signup' && (formData.password !== formData['confirm_password'])){
+         setErrors(['Password and Confirm Password not matching']);
+         return;
+     }
+     let authData;
      if(mode==='signup'){
-        authData.name= formData.first_name + " " + formData.last_name;
-        authData.phone=formData.phone;
+     authData = new FormData();
+     authData.append('email',formData.email);
+     authData.append('password',formData.password);
+     authData.append('user_type',formData.user_type);
+     console.log(formData,authData);
+console.log(authData.get('email'),formData.password);
+     if(mode==='signup'){
+        authData.append('name',formData.first_name + " " + formData.last_name);
+        authData.append('phone',formData.phone);
+        if (formData.profileImage && formData.profileImage[0])
+            authData.append('profileImage',formData.profileImage[0]);
+        else{
+            const initials = `${formData.first_name?.[0] || ''}${formData.last_name?.[0] || ''}`;
 
-        if(authData.user_type==='admin' && (formData.account_number===formData.confirm_account_number))
-            authData.bus_name=formData.bus_name;
-            authData.bus_type=formData.bus_type;
-            authData.bus_category=formData.bus_category;
-            authData.bus_subcategory=formData.bus_subcategory;
-            authData.pan=formData.pan;
-            authData.gstin=formData.gstin;
-            authData.address=formData.address;
-            authData.account_number=formData.account_number;
-            authData.account_holder_name=formData.account_holder_name;
-            authData.ifsc_code=formData.ifsc_code;
+            authData.append('profileImage', initials || 'NO_IMAGE');
+        }
+console.log(authData);
 
+        if(authData.user_type==='admin' && (formData.account_number===formData.confirm_account_number)){
+            authData.append('bus_name',formData.bus_name);
+            authData.append('bus_type',formData.bus_type);
+            authData.append('bus_category',formData.bus_category);
+            authData.append('bus_subcategory',formData.bus_subcategory);
+            authData.append('pan',formData.pan);
+            authData.append('gstin',formData.gstin);
+        }
+        // address is an array like ['Line1', 'Line2', 'City']
+            const addressArray = formData.address;
+            // Loop through the array and append each element separately
+            addressArray.forEach((addressLine, index) => {
+                authData.append(`address[${index}]`, addressLine);
+            });
+
+            authData.append('account_number',formData.account_number);
+            authData.append('account_holder_name',formData.account_holder_name);
+            authData.append('ifsc_code',formData.ifsc_code);
      }
      //first created cart/wishlist/order and then signed up
     const cart_id=JSON.parse(localStorage.getItem('cartId'));
-     if(cart_id)
-        authData.cart_id= cart_id;
-    else
-        authData.cart_id=null;
+    authData.append('cart_id', cart_id||null);
 
     const wishlist=JSON.parse(localStorage.getItem('wishlist'));
-     if(wishlist)
-        authData.wishlist= wishlist;
-    else
-        authData.wishlist=null;
+    authData.append('wishlist', wishlist||null);
 
     const orders=JSON.parse(localStorage.getItem('orders'));
-     if(orders)
-        authData.orders= orders;
-    else
-        authData.orders=null;
+    authData.append('orders',orders||null);
+    }
 
-
+   else if (mode === 'login') {
+        authData = JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          cart_id: JSON.parse(localStorage.getItem('cartId')) || null,
+          wishlist: JSON.parse(localStorage.getItem('wishlist')) || null,
+          orders: JSON.parse(localStorage.getItem('orders')) || null,
+        });
+    }
 
     console.log(authData);
-     const response= await fetch('http://localhost:5000/user/'+ mode, {
+     const response= await fetch(`http://localhost:5000/user/${mode}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(authData)
+      headers: mode === 'login' ? { 'Content-Type': 'application/json' } : {},  //because of profile picture in signup
+      body: authData
      });
 
 
@@ -129,15 +146,17 @@ let order='';
 }
      try{
        const resData= await response.json();
-       console.log("json response ",resData);
+       //console.log("json response ",resData);
        const token=resData.token;
        const userid=resData.userId;
        const usertype=resData.user_type;
+       //const superAdmin=resData.super_admin;
        const expiration=new Date();
        expiration.setHours(expiration.getHours()+1);
        console.log(usertype);
   //=========================
       try{
+        let profileImage,superAdmin=null, isSubscribed=null;
          const response=await fetch(`http://localhost:5000/user/${userid}`);
           if (!response){
              throw new Error('Updating User failed');
@@ -148,21 +167,57 @@ let order='';
            console.log(loggedUser);
            const user_cart= loggedUser.cart_id;
            const user_wl= loggedUser.wishlist;
+           profileImage= loggedUser.profileImage;
+           superAdmin= loggedUser.super_admin||false;
+           isSubscribed=loggedUser.notificationPreferences;
+           console.log('isSubscribed ', isSubscribed?.pushSubscribed);
 
+           if(isSubscribed?.pushSubscribed){
+                let notificationResponse;
+                if(usertype==='admin')
+                     notificationResponse=await fetch('http://localhost:5000/notifications',{
+                       method:'GET',
+                       headers:{
+                           'Content-Type':'application/json',
+                            'Authorization':'Bearer '+ token}
+                       });
+                else
+                     notificationResponse=await fetch('http://localhost:5000/notifications/user',{
+                        method:'GET',
+                        headers:{
+                            'Content-Type':'application/json',
+                             'Authorization':'Bearer '+ token}
+                        });
+
+                if(notificationResponse.ok){
+                    const {notifications}=await notificationResponse.json();
+                    console.log(notifications);
+                    const newNotifications= notifications.filter((notification)=>notification.readByUser===false);
+                    console.log(newNotifications);
+                    if(newNotifications)
+                       localStorage.setItem('Notifications',JSON.stringify(newNotifications));
+
+                    console.log(newNotifications);
+                }
+             }
                 const ordersResp=await fetch(`http://localhost:5000/orders/getActiveOrders/${userid}`,{
                 headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                 },});
+
                 console.log(ordersResp);
                 if(!ordersResp)
                     throw new Error('Could not fetch your orders');
                 const orders=await ordersResp.json();
                 const user_orders=orders.data;
+
                 console.log(user_orders);
 
-           if(authCtx.isAdmin && user_cart && JSON.parse(localStorage.getItem('cartId'))){
-            if(user_cart != JSON.parse(localStorage.getItem('cartId'))){
+           localStorage.setItem('avatar',(profileImage));
+           console.log(JSON.stringify(profileImage));
+           if(!authCtx.isAdmin && user_cart && JSON.parse(localStorage.getItem('cartId'))){
+            if(user_cart !== JSON.parse(localStorage.getItem('cartId'))){
               let concan=window.confirm("Do you want to replace your previous cart with the new one?");
               if(concan){
                    //user_cart=JSON.parse(localStorage.getItem('cartId'));
@@ -179,23 +234,29 @@ let order='';
               else
                    localStorage.setItem('cartId',JSON.stringify(user_cart));
               }
-           }
-           if(user_wl && JSON.parse(localStorage.getItem('Wishlist'))){
-              let concan=window.confirm("Do you want to replace your previous wishlist with the new one?");
-              if(concan){
-                   //user_wl=JSON.parse(localStorage.getItem('wishlist'));
-                   await fetch(
-                          `http://localhost:5000/user/wishlist`,
-                      {
-                          method: 'PUT',
-                          headers:{'content-type':'application/json'},
-                          body:JSON.stringify({
-                            id:userid,
-                            wishlist:JSON.parse(localStorage.getItem('wishlist'))})
-                      })
-              }
               else
-                   localStorage.setItem('wishlist',JSON.stringify(user_wl));
+                   localStorage.setItem('cartId',JSON.stringify(user_cart));
+           }
+           if(!authCtx.isAdmin && user_wl && JSON.parse(localStorage.getItem('Wishlist'))){
+              if(user_wl !== JSON.parse(localStorage.getItem('Wishlist'))){
+                  let concan=window.confirm("Do you want to replace your previous wishlist with the new one?");
+                  if(concan){
+                       //user_wl=JSON.parse(localStorage.getItem('wishlist'));
+                       await fetch(
+                              `http://localhost:5000/user/wishlist`,
+                          {
+                              method: 'PUT',
+                              headers:{'content-type':'application/json'},
+                              body:JSON.stringify({
+                                id:userid,
+                                wishlist:JSON.parse(localStorage.getItem('wishlist'))})
+                          })
+                  }
+                  else
+                       localStorage.setItem('wishlist',JSON.stringify(user_wl));
+               }
+               else
+                  localStorage.setItem('wishlist',JSON.stringify(user_wl));
 
            }
 
@@ -203,13 +264,17 @@ let order='';
                   localStorage.setItem('orders',JSON.stringify(user_orders));
 
          }
+         console.log(superAdmin, isSubscribed);
+         //localStorage.setItem('superAdmin',JSON.stringify(superAdmin)|| false);
+         //localStorage.setItem('isSubscribed',JSON.stringify(isSubscribed)|| null);
+
+       authCtx.login(userid, token, expiration, usertype, superAdmin, isSubscribed);
 
        }catch(error)
        {
          console.log(error.message);
        }
  //===================
-       authCtx.login(userid, token, expiration,usertype);
 
 
 

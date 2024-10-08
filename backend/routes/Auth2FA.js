@@ -10,7 +10,10 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.COMPANY_EMAIL,
         pass: process.env.EMAIL_PASSWORD
-    }
+    },
+    tls: {
+        rejectUnauthorized: false
+      }
 });
 
 // Generate a random 6-digit verification code
@@ -37,7 +40,7 @@ console.log(email, process.env.COMPANY_EMAIL, process.env.EMAIL_PASSWORD);
 
     transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
-            console.log(err.message);
+            console.log("error:",err.message);
             return res.status(500).send({ message: 'Failed to send 2FA code' });
         }
         res.status(200).send({ message: '2FA code sent. Please check your email.', tempToken });

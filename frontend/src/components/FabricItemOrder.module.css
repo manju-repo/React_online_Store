@@ -47,6 +47,20 @@ input{
     font-size:15px;
     text-align:left;
     margin-bottom:15px;
+    color:grey;
+}
+
+.notifyMessage{
+    width:500px;
+    font-size:15px;
+    font-style:italic;
+    border:none;
+    color:grey;
+    background-color:transparent;
+}
+
+.notifyMessage:hover {
+    color:pink;
 }
 
 .details{

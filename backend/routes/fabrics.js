@@ -1,6 +1,10 @@
 const express = require('express');
+const {multipleUpload}
+
+ = require('../middleware/multer'); // Import the configured multer middleware
 const checkAuth = require('../middleware/checkAuth');
-const { getAll,getCollection, get, add, put, remove } = require('../data/fabric');
+
+const { getAll,getCollection, get, add, update, remove, adminStockUpdate } = require('../data/fabric');
 const {
   isValidText,
   isValidDate,
@@ -12,14 +16,12 @@ const router = express.Router();
 
 
 router.get('/:fabric_id', async (req, res, next) => {
-console.log("in routes with id");
+//console.log("in routes with id");
     const fabric_id=req.params.fabric_id;
-console.log("id in routes:"+fabric_id);
+//console.log("id in routes:"+fabric_id);
 
     try {
         const fabric = await get(fabric_id);
-            console.log(fabric);
-
         res.json(fabric);
     } catch (error) {
     next(error);
@@ -42,10 +44,8 @@ console.log("id in routes with subcat:"+subcategory_id);
 });*/
 
 router.get('/', async (req, res, next) => {
-console.log(req.url);
   const sub_category = req.query.sub_category;
 
-console.log('fabric routes',sub_category);
   try {
   let fabrics=null;
   if(sub_category)
@@ -60,10 +60,11 @@ console.log('fabric routes',sub_category);
   }
 });
 
-router.use(checkAuth);
-router.delete('/:id', remove);
+//router.use(checkAuth);
+router.delete('/:id', checkAuth, remove);
 
-router.post('/',add);
-router.put('/:id',put);
-
+router.post('/', checkAuth, add);
+//console.log(multipleUpload); // Log the multipleUpload to check what it contains
+router.put('/adminStockUpdate/:id', checkAuth, adminStockUpdate);
+router.put('/:id', checkAuth, multipleUpload, update);
 module.exports = router;

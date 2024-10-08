@@ -7,7 +7,9 @@ const userSchema = new mongoose.Schema({
     email: {type:String, required:true, unique:true},
     password: {type:String, required:true, minlength:6},
     phone: {type: String,minlength: 10,maxlength: 10,match: [/^\d{10}$/, 'Please enter a valid 10-digit phone number']},
+    profileImage: {type:String},
     user_type: {type:String},
+    super_admin: {type:Boolean},
     bus_type:  {type:String},
     bus_name:  {type:String},
     bus_category:  {type:String},
@@ -20,7 +22,8 @@ const userSchema = new mongoose.Schema({
     ifsc_code:  {type:String},
     cart_id:{type:String},
     wishlist:[String],
-    orders:[String]
+    orders:[String],
+    notificationPreferences:{type:Object, default:null}
 },{collection: 'User'});
 
 userSchema.plugin(uniqueValidator);

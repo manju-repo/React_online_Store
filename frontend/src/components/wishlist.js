@@ -12,7 +12,8 @@ import {AuthContext} from '../Context/auth-context';
 
 const WishlistPage=()=>{
 
-    const {wishlist, updateWishlist}=useContext(WishlistContext);
+    const {wishlist, updateWishlist, showModal, modalOpen}=useContext(WishlistContext);
+
     const {userId, isLoggedIn}=useContext(AuthContext);
 console.log(wishlist);
     const [wishlistItems,setWishlistItems]=useState([]);
@@ -21,36 +22,53 @@ console.log(wishlist);
     const modal=useRef();
     const navigate=useNavigate();
 
-     useEffect(()=>{
+    useEffect(()=>{
+    if(showModal)
+        modalOpen(false);
+        modalOpen(true);
+    });
+
+    useEffect(()=>{
+
+    console.log('in ue', showModal);
         const fetchWishlistItems=async()=>{
-            console.log(wishlist);
-            if(!wishlist) return null;
-            const promises=wishlist.map(async(wishlistId)=>{
-            try{
-                const response=await fetch('http://localhost:5000/fabrics/'+wishlistId);
-                if(! response.ok){
-                    throw Error('Could not load selected fabric');
+                 if (!wishlist || wishlist.length === 0) return null;
+                const promises=wishlist.map(async(wishlistId)=>{
+                try{
+                    const response=await fetch('http://localhost:5000/fabrics/'+wishlistId);
+                    if(! response.ok){
+                        throw Error('Could not load selected fabric');
+                    }
+                    return await response.json();
                 }
-                return await response.json();
+                catch(error){
+                    console.log(error);
+                    return null
+                }
+              });
+                   const wishlistResp = await Promise.all(promises);
+                   if(wishlistResp.length!==0){
+                        setWishlistItems(wishlistResp.filter(item => item !== null));
+                        //modal.current.open();
+                    }
+                   else
+                        setWishlistItems([]);
             }
-            catch(error){
-                console.log(error);
-                return null
-            }
-          });
-               const wishlistResp = await Promise.all(promises);
-               if(wishlistResp.length!==0)
-                    setWishlistItems(wishlistResp.filter(item => item !== null));
-               else
-                    setWishlistItems([]);
-        }
-        if(wishlist.length>0){
+        if(showModal && wishlist.length>0){
             fetchWishlistItems();
             modal.current.open();
         }
          else
-            navigate('/');
+            navigate(-1);
+    },[wishlist, navigate, showModal]);
+
+
+     useEffect(()=>{
+    console.log('in ue1',showModal);
+
             return()=>{
+            console.log('in return');
+            //modalOpen(false);
                 (async()=>{
                 if(!isLoggedIn) return;
                 const lsWishlist=JSON.parse(localStorage.getItem("Wishlist"));
@@ -70,9 +88,11 @@ console.log(wishlist);
                 }
             })();
           }
-        }, [wishlist, isLoggedIn, userId, navigate]);
+        }, [wishlist, isLoggedIn, userId]);
 
     function handleReset(){
+    console.log('in reset');
+       // modalOpen(false);
         modal.current.close();
         navigate(-1);
      }
@@ -88,7 +108,8 @@ console.log(wishlist);
       }
 
        return(<>
-        <Modal ref={modal} onReset={handleReset} >
+       {showModal && (
+        <Modal  ref={modal} onReset={handleReset} >
 
         <h2>My Wishlist</h2>
         <div  className={classes.container}>
@@ -108,8 +129,9 @@ console.log(wishlist);
         </ul></div>
         <div className={classes.actions}><button className={classes.button} onClick={handleReset}>Back</button></div>
         </Modal>
-
+)}
 </>
+
 );
 
  }

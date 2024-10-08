@@ -43,22 +43,16 @@ const CartPage=()=>{
 
 
      useEffect(()=>{
-
-
       cartTotalItems && showCart && modal.current.open();
       return() => {
-             dispatch(uiActions.clearNotification());
+              dispatch(uiActions.clearNotification());
               dispatch(uiActions.setCartVisibility(false));
            }
      }, [dispatch, showCart, stockMsg]);
 
 
-
-
-
-
     function handleReset(){
-
+console.log('in reset');
         dispatch(uiActions.setCartVisibility(false));
         dispatch(uiActions.clearNotification());
         modal.current.close();

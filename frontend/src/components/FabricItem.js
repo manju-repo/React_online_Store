@@ -1,11 +1,14 @@
+import React from 'react';
+import {useNavigate} from 'react-router-dom';
 import classes from './FabricItem.module.css';
 import FabricItemOrder from './FabricItemOrder';
 import FabricForm from './FabricForm';
 import {useContext, useState, useEffect} from 'react';
 import {AuthContext} from '../Context/auth-context';
 
-function FabricItem(props){
+const FabricItem = React.memo((props) => {
 const authCtx=useContext(AuthContext);
+const navigate=useNavigate();
 const item=props.item;
 console.log( item);
 
@@ -25,8 +28,8 @@ useEffect(()=>{
     setSelectedImageIndex(0);
     //console.log(item.colour_options);
     const fetchVariants=async()=>{
+        if (item.product_code?.includes('-')) {
         try{
-
             const prod=item.product_code.split('-');
             console.log(prod[0]);
             const varResp=await fetch(`http://localhost:5000/store/variants/${prod[0]}`);
@@ -38,13 +41,13 @@ useEffect(()=>{
         catch(error){
             console.log(error.message);
         }
-
+        }
     }
     fetchVariants();
     //if(variants.length>0)
         console.log(variants);
 
-},[item]);
+},[]);
 return(
 <div style={{marginTop:'50px',textAlign:'left'}}>
 <button
@@ -60,10 +63,8 @@ return(
     cursor: 'pointer',
     fontSize: '20px'
   }}
-  onClick={() => window.history.back()}
->
-  Back
-</button>
+  onClick={()=> navigate('/store/'+item.category)}>
+<i class="fa-regular fa-less-than"></i></button>
  <div className={classes.disp}>
                 <div className={classes.imageContainer}>
                     <div className={`${classes.mainImageContainer} ${isZoomed ? classes.zoomed : ''}`}>
@@ -93,13 +94,19 @@ return(
                 </div>
 
 
-        {!authCtx.isAdmin && <div style={{width:'50%',height:'100%',marginRight:'50px'}}><FabricItemOrder item={{id:item._id, product_code:item.product_code, category:item.category,sub_category:item.sub_category,type:item.type,rate:item.price,image:item.image,desc:item.desc,details:item.details,created_by:item.created_by,stock:item.stock,colour:item.colour,size:item.size,variants:variants}}/></div>}
+        {!authCtx.isAdmin && <div style={{width:'50%',height:'100%',marginRight:'50px'}}>
+        <FabricItemOrder item={{id:item._id, product_code:item.product_code, category:item.category,sub_category:item.sub_category,
+        type:item.type,rate:item.price,image:item.image,desc:item.desc,details:item.details,created_by:item.created_by,stock:item.stock,
+        colour:item.colour,size:item.size,variants:variants}}/></div>}
 
-        {authCtx.isAdmin && authCtx.userId===item.created_by && <div style={{width:'50%',height:'100%'}}><FabricForm mode='edit' item={{id:item._id,product_code:item.product_code,category:item.category,sub_category:item.sub_category,type:item.type,rate:item.price,image:item.image,desc:item.desc,details:item.details,colour:item.colour,size:item.size,stock:item.stock}}/></div>}
+        {authCtx.isAdmin && authCtx.userId===item.created_by && <div style={{width:'50%',height:'100%'}}>
+        <FabricForm mode='edit' item={{id:item._id,product_code:item.product_code,category:item.category,sub_category:item.sub_category,
+        type:item.type,rate:item.price,image:item.image,desc:item.desc,details:item.details,colour:item.colour,
+        size:item.size,maxSize:item.maxSize,stock:item.stock,lowStock:item.low_stock,minStock:item.min_stock}}/></div>}
 
     </div>
 
 </div>
 );
-}
+});
 export default FabricItem;

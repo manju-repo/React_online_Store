@@ -1,6 +1,8 @@
 const express = require('express');
+const {upload} = require('../middleware/multer'); // Import the configured multer middleware
+const checkAuth = require('../middleware/checkAuth');
 
-const {  getUsers, getUser, signUp, login, setCartId, setWishlist, addOrder, createRazorpayAccount} = require('../data/user');
+const {  getUsers, getUser, getSubscriptions, signUp, login, setCartId, setWishlist, setSubscriptions, addOrder, createRazorpayAccount, update} = require('../data/user');
 const {
   isValidText,
   isValidDate,
@@ -9,13 +11,17 @@ const {
 
 const router = express.Router();
 
-router.get('/', getUsers);
+router.get('/subscriptions/:userId', getSubscriptions);
+router.get('/subscriptions',checkAuth, getSubscriptions);
 router.get('/:id',getUser);
-router.post('/signup', signUp);
+router.get('/', getUsers);
+router.post('/signup', upload.single('profileImage'), signUp); // Apply upload middleware here
 router.post('/login', login);
 router.put('/cart', setCartId);
 router.put('/wishlist', setWishlist);
 router.put('/orders', addOrder);
+router.put('/subscriptions',checkAuth, setSubscriptions);
+router.put('/:id', upload.single('profileImage'), update); // Apply upload middleware here
 router.post('/createRazorpayAccount', createRazorpayAccount);
 
 

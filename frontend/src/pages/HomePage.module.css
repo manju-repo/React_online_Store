@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
 .container {
   margin: 20px;
 }
@@ -37,8 +39,8 @@ div.gallery img {
 }
 
 .item .desc{
- color:black;
-}
+font-family: 'Lobster', cursive;
+  font-size: 1rem;}
 
 .item:hover .desc{
  color:purple;
@@ -76,4 +78,13 @@ div.gallery img {
   content: "";
   display: table;
   clear: both;
+}
+
+.bestSellersHeading {
+  font-family: 'Lobster', cursive;
+  font-size: 2.5rem;
+  color: #333;
+  text-align: center;
+  margin: 20px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }

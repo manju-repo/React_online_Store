@@ -104,7 +104,8 @@ const CartItem = (props) => {
       }
 
   const removeEntryHandler = () => {
-       if(stock===0)            //user removes item because it is not available
+
+       if(stock<=0)            //user removes item because it is not available
             inputQuantity.current.value=0;
        else{
             //alert(`qty: ${inputQuantity.current.value}`);
